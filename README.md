@@ -1,6 +1,8 @@
 
 # Diseño de Sistemas - Grupo 10
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/85d5479a3d2e42e990e149ae42fe3309)](https://app.codacy.com/gh/Mauro-Rivero/TEST_CODACY_proyecto_heladeras_solidarias?utm_source=github.com&utm_medium=referral&utm_content=Mauro-Rivero/TEST_CODACY_proyecto_heladeras_solidarias&utm_campaign=Badge_Grade)
+
 
 
 ## Integrantes
