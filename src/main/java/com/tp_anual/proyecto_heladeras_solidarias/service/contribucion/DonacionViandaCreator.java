@@ -27,9 +27,7 @@ public class DonacionViandaCreator implements ContribucionCreator {
 
     @Override
     public Contribucion crearContribucionDefault(Colaborador colaborador, LocalDateTime fechaContribucion) {
-        DonacionVianda donacionVianda = new DonacionVianda(colaborador, fechaContribucion,
-                new Vianda(null, null, null, null, null, null, null),
-                new Heladera(null, null, null, null, null, new ArrayList<Vianda>(),null, null, null));
+        DonacionVianda donacionVianda = new DonacionVianda(colaborador, fechaContribucion, null, null);
         donacionVianda.seCompletoYSumoPuntos(); // Llamo directamente al método de donacionVianda, porque no quiero que se guarde en este momento
 
         return donacionVianda;

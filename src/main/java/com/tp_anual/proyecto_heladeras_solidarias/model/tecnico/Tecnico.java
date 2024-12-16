@@ -48,7 +48,7 @@ public class Tecnico {
     @Setter
     private Area areaDeCobertura;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "tecnico")
     private List<Incidente> pendientes = new ArrayList<>();    // final
 

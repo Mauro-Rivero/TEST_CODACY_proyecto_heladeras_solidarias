@@ -1,5 +1,6 @@
 package com.tp_anual.proyecto_heladeras_solidarias.service.tecnico;
 
+import com.tp_anual.proyecto_heladeras_solidarias.model.incidente.Incidente;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.model.tecnico.Visita;
 import com.tp_anual.proyecto_heladeras_solidarias.repository.tecnico.VisitaRepository;
@@ -30,6 +31,10 @@ public class VisitaService {
 
     public List<Visita> obtenerVisitas() {
         return new ArrayList<>(visitaRepository.findAll());
+    }
+
+    public Visita obtenerVisitaNoRevisadaMasRecientePorIncidente(Incidente incidente) {
+        return visitaRepository.findByIncidenteAndRevisadaFalseOrderByFechaDesc(incidente);
     }
 
     public List<Visita> obtenerVisitasNoExitosas() {return new ArrayList<>(visitaRepository.findByEstadoFalseAndRevisadaFalse());}

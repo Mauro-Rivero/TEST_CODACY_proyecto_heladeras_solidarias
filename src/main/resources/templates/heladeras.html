@@ -44,7 +44,7 @@
                             <tr class="fila-heladera" th:each="heladera : ${heladeras}">
                                 <td class="text-nowrap" th:text="${heladera.getNombre()}"></td>
                                 <td class="text-nowrap" th:text="${heladera.getUbicacion().getDireccionCompleta()}"></td>
-                                <td class="text-nowrap" th:text="${heladera.getEstado()}"></td>
+                                <td class="text-nowrap" th:text="${heladera.getEstadoString()}"></td>
                                 <td class="text-nowrap" th:text="${heladera.getFechaAperturaFormateada()}"></td>
 
                                 <td class="d-flex align-items-center justify-content-center gap-3">

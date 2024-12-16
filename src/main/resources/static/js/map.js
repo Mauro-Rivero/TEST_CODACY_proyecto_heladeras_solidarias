@@ -1,6 +1,6 @@
 let mapa;
 let marker;
-let infoWindowActual;
+let infoWindowActual;  // Variable global para la InfoWindow activa
 let heladeras = [];
 
 async function iniciarMapa() {
@@ -14,7 +14,7 @@ async function iniciarMapa() {
     mapa = new Map(document.querySelector('#map'), {
         zoom: 11,
         center: posicion,
-        mapId: "c793049f56f6348b"
+        mapId: "7d27190631ce6b46"
     });
 
     marker = new Marker( {
@@ -36,6 +36,7 @@ async function iniciarMapa() {
             return;
         }
 
+        // Cerrar la InfoWindow actual, si hay una abierta
         if (infoWindowActual) {
             infoWindowActual.close();
         }
@@ -52,7 +53,10 @@ async function iniciarMapa() {
                 content: `<h4>Heladera más cercana</h4><p>${heladeraMasCerca.marker.getTitle()}</p>`
             });
 
+            // Abrir la nueva InfoWindow
             infoWindow.open(mapa, heladeraMasCerca.marker);
+
+            // Asignar la InfoWindow actual
             infoWindowActual = infoWindow;
         }
     });
@@ -80,9 +84,8 @@ function encontrarHeladeraMasCercana(userPosition, heladeras, spherical) {
 
 async function obtenerHeladeras() {
     try {
-        const response = await fetch('http://localhost:8080/api/heladeras');
+        const response = await fetch('https://proyecto-heladeras-solidarias.onrender.com/api/heladeras');
         const heladeras = await response.json();
-
 
         const { Marker } = await google.maps.importLibrary("marker");
 
@@ -92,21 +95,28 @@ async function obtenerHeladeras() {
                 map: mapa,
                 title: heladera.nombre,
                 icon: {
-                    url: 'https://raw.githubusercontent.com/luciacosenza/DDS-grupo10/main/proyecto_heladeras_solidarias/src/main/resources/static/assets/iconUbicacionHeladeras.png',
+                    url: 'https://raw.githubusercontent.com/luciacosenza/proyecto_heladeras_solidarias/main/src/main/resources/static/assets/iconUbicacionHeladeras.png',
                     scaledSize: new google.maps.Size(25, 35),
                     origin: new google.maps.Point(0, 0)
-                }   // TODO: ver como cambiar el iconito
+                }
             });
 
-            const infoWindow = new google.maps.InfoWindow( {
+            const infoWindow = new google.maps.InfoWindow({
                 content: `<h4>${heladera.nombre}</h4><p>${heladera.ubicacion.direccion}</p>`
             });
 
             marker.addListener('click', () => {
-                infoWindow.open(mapa, marker);
-            });
+                // Cerrar cualquier InfoWindow abierta
+                if (infoWindowActual) {
+                    infoWindowActual.close();
+                }
 
-            heladeras.push({ marker: marker, position: heladera.position });
+                // Abrir la nueva InfoWindow
+                infoWindow.open(mapa, marker);
+
+                // Actualizar la referencia a la InfoWindow abierta
+                infoWindowActual = infoWindow;
+            });
         });
 
         return heladeras;
@@ -114,4 +124,4 @@ async function obtenerHeladeras() {
         console.error('Error fetching heladeras data:', error);
     }
 }
-iniciarMapa()
+iniciarMapa();

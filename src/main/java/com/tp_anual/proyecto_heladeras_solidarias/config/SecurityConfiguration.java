@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
                         // Endpoints "públicos"
                         .requestMatchers
-                                (HttpMethod.GET,"/", "/quienes-somos", "/como-participar", "/mapa-heladeras",
+                                ("/", "/quienes-somos", "/como-participar", "/mapa-heladeras",
                                 "/seleccion-persona",
                                 "/registro-persona-humana", "/registro-persona-humana/guardar",
                                 "/registro-persona-juridica", "/registro-persona-juridica/guardar",
@@ -70,6 +70,7 @@ public class SecurityConfiguration {
                                 (new AntPathRequestMatcher("/admin"),
                                 new AntPathRequestMatcher("/registro-tecnico"))
                         .hasAuthority("ROL_ADMIN")
+                        // Endpoints exclusivos de 'ROL_T' (técnico)
                         .requestMatchers("/tecnico")
                         .hasAuthority("ROL_T")
                         .requestMatchers

@@ -1,5 +1,7 @@
 package com.tp_anual.proyecto_heladeras_solidarias.service.incidente;
 
+import com.tp_anual.proyecto_heladeras_solidarias.model.incidente.Alerta;
+import com.tp_anual.proyecto_heladeras_solidarias.model.tecnico.Tecnico;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.Colaborador;
 import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.Heladera;
@@ -39,8 +41,26 @@ public class FallaTecnicaService {
         return new ArrayList<>(fallaTecnicaRepository.findAll());
     }
 
+    public List<FallaTecnica> obtenerFallasTecnicasParaTecnico(Tecnico tecnico) {
+        return new ArrayList<>(fallaTecnicaRepository.findFallasTecnicasParaTecnico(tecnico.getId()));
+    }
+
+    public List<FallaTecnica> obtenerFallasTecnicasNoResueltas() {
+        return new ArrayList<>(fallaTecnicaRepository.findFallasTecnicasNoResueltas());
+    }
+
+    public List<FallaTecnica> obtenerFallasTecnicasSinTecnicoNoResueltas() {
+        return new ArrayList<>(fallaTecnicaRepository.findFallasTecnicasSinTecnicoNoResueltas());
+    }
+
     public FallaTecnica guardarFallaTecnica(FallaTecnica fallaTecnica) {
         return fallaTecnicaRepository.save(fallaTecnica);
+    }
+
+    public void asignarTecnico(Long alertaId, Tecnico tecnico) {
+        FallaTecnica fallaTecnica = obtenerFallaTecnica(alertaId);
+        fallaTecnica.setTecnico(tecnico);
+        guardarFallaTecnica(fallaTecnica);
     }
 
     public void producirFallaTecnica(LocalDateTime fecha, Heladera heladera, Colaborador colaborador, String descripcion, String foto) {

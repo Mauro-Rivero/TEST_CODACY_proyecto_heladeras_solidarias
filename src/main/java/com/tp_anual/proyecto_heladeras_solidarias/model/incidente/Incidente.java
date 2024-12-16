@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.Heladera;
 
+import com.tp_anual.proyecto_heladeras_solidarias.model.tecnico.Tecnico;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,15 +13,15 @@ import lombok.Setter;
 @Entity
 @NamedNativeQuery(
         name = "Incidente.findIncidentesParaTecnico",
-        query = "SELECT * FROM alerta AS a" +
+        query = "SELECT * FROM alerta AS a " +
                 "INNER JOIN tecnico AS t1 " +
                 "ON a.tecnico = t1.id " +
                 "WHERE t1.id = :tecnico " +
                 "UNION ALL " +
-                "SELECT * FROM falla_tecnica AS f" +
+                "SELECT * FROM falla_tecnica AS f " +
                 "INNER JOIN tecnico AS t2 " +
                 "ON f.tecnico = t2.id " +
-                "WHERE t2.id = :tecnico ",
+                "WHERE t2.id = :tecnico",
         resultClass =  Incidente.class
 )
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -40,6 +41,12 @@ public abstract class Incidente {
     @Setter
     protected Heladera heladera;
 
+    // Este atributo sólo nos sirve para manejarlo en el backend
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tecnico")
+    @Setter
+    protected Tecnico tecnico;
+
     protected Incidente() {}
 
     protected Incidente(LocalDateTime vFecha, Heladera vHeladera) {
@@ -54,5 +61,9 @@ public abstract class Incidente {
         }
 
         return "";
+    }
+
+    public Boolean tieneTecnico() {
+        return tecnico != null;
     }
 }

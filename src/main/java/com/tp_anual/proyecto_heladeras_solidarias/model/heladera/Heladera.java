@@ -95,6 +95,10 @@ public class Heladera implements HeladeraObserver {    // Implementa una Interfa
         return "";
     }
 
+    public String getEstadoString() {
+        return estado ? "Activa" : "Inactiva";
+    }
+
     public Integer viandasActuales() {return viandas.size();}
 
     public void actualizarFechaApertura() {setFechaApertura(LocalDateTime.now());}

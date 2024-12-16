@@ -57,6 +57,13 @@
                                 </button>
                             </a>
                         </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start" sec:authorize="isAuthenticated() and hasAuthority('ROL_T')">
+                            <a class="href-colab" th:href="@{/tecnico}">
+                                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">
+                                    Ver panel
+                                </button>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

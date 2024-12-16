@@ -3,7 +3,7 @@ async function recomendarPuntosHeladeras(){
     try {
         const response = await fetch(url);
         const data = await response.json();
-        
+
         const { Marker } = await google.maps.importLibrary("marker");
         data.puntosRecomendados.forEach(punto => {
                     const puntoRecomendado = new Marker( {
@@ -19,9 +19,9 @@ async function recomendarPuntosHeladeras(){
                     const infoWindow = new google.maps.InfoWindow({
                         content:    `<h4>Punto recomendado</h4>
                                     <p>${punto.direccion}</p>`
-                        
+
                     });
-            
+
                     puntoRecomendado.addListener('click', () => {
                         infoWindow.open(mapa, puntoRecomendado);
                     });
@@ -29,7 +29,7 @@ async function recomendarPuntosHeladeras(){
     }catch(error){}
 }
 async function obtenerHeladeras() {
-    const url = 'http://localhost:8080/api/heladeras';
+    const url = 'https://proyecto-heladeras-solidarias.onrender.com/api/heladeras';
     try {
         const response = await fetch(url);
         const heladeras = await response.json();
@@ -42,10 +42,10 @@ async function obtenerHeladeras() {
                 map: mapa,
                 title: heladera.nombre,
                 icon: {
-                    url: 'https://raw.githubusercontent.com/luciacosenza/DDS-grupo10/main/proyecto_heladeras_solidarias/src/main/resources/static/assets/iconUbicacionHeladeras.png',
+                    url: 'https://raw.githubusercontent.com/luciacosenza/proyecto_heladeras_solidarias/main/src/main/resources/static/assets/iconUbicacionHeladeras.png',
                     scaledSize: new google.maps.Size(25, 35),
                     origin: new google.maps.Point(0, 0)
-                }   // TODO: ver como cambiar el iconito
+                }
             });
 
             const infoWindow = new google.maps.InfoWindow( {
@@ -64,14 +64,7 @@ async function obtenerHeladeras() {
         console.error('Error fetching heladeras data:', error);
     }
 }
-async function abrirMapa() {
-    if (document.querySelector('#colocar-heladera')) {
-        const btnAbrirMapa = document.querySelector('#btn-abrir-mapa');
-        btnAbrirMapa.addEventListener('click', async () => {
-        
-        });
-    }    
-}
+
 
 async function iniciarMapa() {
             const posicion = {lat: -34.5990697, lng: -58.4241739}
@@ -79,7 +72,7 @@ async function iniciarMapa() {
             mapa = new Map(document.querySelector('.map-recomendacion'), {
                 zoom:11,
                 center: posicion,
-                mapId: "c793049f56f6348b" 
+                mapId: "7d27190631ce6b46"
             });
 }
 

@@ -8,6 +8,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IncidenteRepository extends JpaRepository<Incidente, Long> {
-    @Query(nativeQuery = true, name = "Incidente.findIncidentesParaTecnico")
-    List<Incidente> findIncidentesParaTecnico(@Param("tecnico") Long tecnicoId);
+
 }

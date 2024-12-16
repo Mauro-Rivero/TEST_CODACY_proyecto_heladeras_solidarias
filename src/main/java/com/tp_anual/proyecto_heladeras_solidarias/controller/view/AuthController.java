@@ -14,6 +14,7 @@ import com.tp_anual.proyecto_heladeras_solidarias.model.ubicacion.Ubicacion;
 import com.tp_anual.proyecto_heladeras_solidarias.model.usuario.NoUsuario;
 import com.tp_anual.proyecto_heladeras_solidarias.model.usuario.Usuario;
 import com.tp_anual.proyecto_heladeras_solidarias.service.colaborador.ColaboradorService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.contacto.EMailService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.contacto.MedioDeContactoService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.contacto.MedioDeContactoServiceSelector;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
@@ -36,14 +37,16 @@ public class AuthController {
     private final TecnicoService tecnicoService;
     private final CustomUserDetailsService customUserDetailsService;
     private final MedioDeContactoServiceSelector medioDeContactoServiceSelector;
+    private final EMailService eMailService;
 
     private final I18nService i18nService;
 
-    public AuthController(ColaboradorService vColaboradorService, CustomUserDetailsService vUsuarioService, TecnicoService vTecnicoService, MedioDeContactoServiceSelector vMedioDeContactoServiceSelector, I18nService vI18nService) {
+    public AuthController(ColaboradorService vColaboradorService, CustomUserDetailsService vUsuarioService, TecnicoService vTecnicoService, MedioDeContactoServiceSelector vMedioDeContactoServiceSelector, EMailService vEMailService, I18nService vI18nService) {
         colaboradorService = vColaboradorService;
         tecnicoService = vTecnicoService;
         customUserDetailsService = vUsuarioService;
         medioDeContactoServiceSelector = vMedioDeContactoServiceSelector;
+        eMailService = vEMailService;
         i18nService = vI18nService;
     }
 
@@ -53,7 +56,9 @@ public class AuthController {
     }
 
     @GetMapping("/registro-persona-humana")
-    public String mostrarRegistroPersonaHumana() {
+    public String mostrarRegistroPersonaHumana(Model model) {
+        model.addAttribute("emails", eMailService.obtenerEMails());
+        model.addAttribute("message", i18nService.getMessage("controller.Authcontroller.mostrarRegistroPersonaHumana"));
         return "registro-persona-humana";
     }
 
@@ -104,7 +109,9 @@ public class AuthController {
     }
 
     @GetMapping("/registro-persona-juridica")
-    public String mostrarRegistroPersonaJuridica() {
+    public String mostrarRegistroPersonaJuridica(Model model) {
+        model.addAttribute("emails", eMailService.obtenerEMails());
+        model.addAttribute("message", i18nService.getMessage("controller.Authcontroller.mostrarRegistroPersonaHumana"));
         return "registro-persona-juridica";
     }
 
@@ -151,7 +158,9 @@ public class AuthController {
     }
 
     @GetMapping("/registro-tecnico")
-    public String mostrarRegistrarTecnico() {
+    public String mostrarRegistrarTecnico(Model model) {
+        model.addAttribute("emails", eMailService.obtenerEMails());
+        model.addAttribute("message", i18nService.getMessage("controller.Authcontroller.mostrarRegistroPersonaHumana"));
         return "registro-tecnico";
     }
 

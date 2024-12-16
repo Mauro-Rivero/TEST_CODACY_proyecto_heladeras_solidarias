@@ -9,6 +9,7 @@ import lombok.extern.java.Log;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.logging.Level;
 
 @Service
@@ -31,6 +32,10 @@ public class EMailService extends MedioDeContactoService {
     @Override
     public EMail obtenerMedioDeContacto(Long eMailId) {
         return eMailRepository.findById(eMailId).orElseThrow(() -> new EntityNotFoundException(i18nService.getMessage("obtenerEntidad_exception")));
+    }
+
+    public List<EMail> obtenerEMails() {
+        return eMailRepository.findAll();
     }
 
     public EMail guardarMedioDeContacto(MedioDeContacto eMail) {

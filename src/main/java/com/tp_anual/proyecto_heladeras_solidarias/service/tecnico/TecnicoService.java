@@ -67,16 +67,17 @@ public class TecnicoService {
         guardarTecnico(tecnico);
     }
 
-    public void registrarVisita(Long tecnicoId, LocalDateTime fecha, String descripcion, String foto, Boolean estadoConsulta) {
+    public void registrarVisita(Long tecnicoId, Incidente incidente, LocalDateTime fecha, String descripcion, String foto, Boolean estadoConsulta) {
         Tecnico tecnico = obtenerTecnico(tecnicoId);
 
-        Incidente ultimoIncidenteTratado = tecnico.getPendientes().removeFirst();    // Suponemos que el Técnico atiende los Incidentes por FIFO
+        incidente.setTecnico(null);
+        tecnico.getPendientes().remove(incidente);
         guardarTecnico(tecnico);
 
-        Visita visita = new Visita(tecnico, ultimoIncidenteTratado, fecha, descripcion, foto, estadoConsulta, estadoConsulta);
+        Visita visita = new Visita(tecnico, incidente, fecha, descripcion, foto, estadoConsulta, estadoConsulta);
         visitaService.guardarVisita(visita);
 
-        log.log(Level.INFO, i18nService.getMessage("tecnico.Tecnico.registrarVisita_info", ultimoIncidenteTratado.getHeladera().getNombre(), ultimoIncidenteTratado.getClass().getSimpleName(), tecnico.getPersona().getNombre(2)));
+        log.log(Level.INFO, i18nService.getMessage("tecnico.Tecnico.registrarVisita_info", incidente.getHeladera().getNombre(), incidente.getClass().getSimpleName(), tecnico.getPersona().getNombre(2)));
     }
 
     // Como convención, para aproximar la Ubicación de un Técnico, vamos a usar el punto medio de su área de cobertura

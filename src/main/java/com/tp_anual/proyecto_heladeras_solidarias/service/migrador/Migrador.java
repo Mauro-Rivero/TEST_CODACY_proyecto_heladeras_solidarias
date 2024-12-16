@@ -11,8 +11,10 @@ import com.tp_anual.proyecto_heladeras_solidarias.exception.contribucion.*;
 import com.tp_anual.proyecto_heladeras_solidarias.exception.migrador.FilaDeDatosIncompletaException;
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.ColaboradorHumano;
 import com.tp_anual.proyecto_heladeras_solidarias.model.contribucion.Contribucion;
+import com.tp_anual.proyecto_heladeras_solidarias.model.usuario.Usuario;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.colaborador.ColaboradorService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.usuario.CustomUserDetailsService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class Migrador {
     private final TransformacionDeDatos transformador;
     private final EnvioDeDatos protocoloEnvio;
     private final ColaboradorService colaboradorService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     private final String ASUNTO = "Gracias por tu apoyo! Aquí están tus credenciales de acceso al nuevo Sistema";
 
@@ -65,11 +68,12 @@ public class Migrador {
 
     private final I18nService i18nService;
 
-    public Migrador(@Qualifier("extraccionCSV") ExtraccionDeDatos vProtocoloExtraccion, TransformacionDeDatos vTransformador, @Qualifier("envioEMail") EnvioDeDatos vProtocoloEnvio, ColaboradorService vColaboradorService, I18nService vI18nService) {
+    public Migrador(@Qualifier("extraccionCSV") ExtraccionDeDatos vProtocoloExtraccion, TransformacionDeDatos vTransformador, @Qualifier("envioEMail") EnvioDeDatos vProtocoloEnvio, ColaboradorService vColaboradorService, CustomUserDetailsService vCustomUserDetailsService, I18nService vI18nService) {
         protocoloExtraccion = vProtocoloExtraccion;
         transformador = vTransformador;
         protocoloEnvio = vProtocoloEnvio;
         colaboradorService = vColaboradorService;
+        customUserDetailsService = vCustomUserDetailsService;
 
         i18nService = vI18nService;
     }
@@ -106,6 +110,9 @@ public class Migrador {
         List<ColaboradorHumano> colaboradoresAMigrar = transformador.transform(dataColaboradores);
 
         for (ColaboradorHumano colaborador : colaboradoresAMigrar) {
+            Usuario usuario = colaborador.getUsuario();
+            customUserDetailsService.guardarUsuario(usuario);
+
             colaboradorService.guardarColaborador(colaborador);
 
             // Tengo que asignar el Colaborador a las Contribuciones después de guardarlo para no tener problemas de persistencia cíclica

@@ -7,7 +7,9 @@ import java.util.List;
 
 import com.tp_anual.proyecto_heladeras_solidarias.exception.contribucion.*;
 import com.tp_anual.proyecto_heladeras_solidarias.exception.migrador.FilaDeDatosIncompletaException;
+import com.tp_anual.proyecto_heladeras_solidarias.model.incidente.FallaTecnica;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.incidente.FallaTecnicaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,13 +32,15 @@ public class AdminViewController {
 
     private final Migrador migrador;
     private final AlertaService alertaService;
+    private final FallaTecnicaService fallaTecnicaService;
     private final ReporteService reporteService;
 
     private final I18nService i18nService;
 
-    public AdminViewController(Migrador vMigrador, AlertaService vAlertaService, ReporteService vReporteService, I18nService vi18nService) {
+    public AdminViewController(Migrador vMigrador, AlertaService vAlertaService, FallaTecnicaService vFallaTecnicaService, ReporteService vReporteService, I18nService vi18nService) {
         migrador = vMigrador;
         alertaService = vAlertaService;
+        fallaTecnicaService = vFallaTecnicaService;
         reporteService = vReporteService;
 
         i18nService = vi18nService;
@@ -44,8 +48,11 @@ public class AdminViewController {
 
     @GetMapping("/admin")
     public String mostrarAdmin(Model model) {
-        List<Alerta> alertas = alertaService.obtenerAlertas();
+        List<Alerta> alertas = alertaService.obtenerAlertasNoResueltas();
         model.addAttribute("alertas", alertas);
+
+        List<FallaTecnica> fallasTecnicas = fallaTecnicaService.obtenerFallasTecnicasNoResueltas();
+        model.addAttribute("fallasTecnicas", fallasTecnicas);
 
         List<FallasPorHeladera> fallasPorHeladera = reporteService.obtenerReporteFallasPorHeladera();
         List<MovimientosViandaPorHeladera> movimientosViandaPorHeladera = reporteService.obtenerReporteMovimientosViandaPorHeladera();
@@ -54,7 +61,9 @@ public class AdminViewController {
         model.addAttribute("reporteFallasPorHeladera", fallasPorHeladera);
         model.addAttribute("reporteMovimientosViandaPorHeladera", movimientosViandaPorHeladera);
         model.addAttribute("reporteViandasPorColaborador", viandasPorColaborador);
+
         model.addAttribute("messageNoAlerts", i18nService.getMessage("controller.AdminController.mostrarAdmin_no_alertas"));
+        model.addAttribute("messageNoFailures", i18nService.getMessage("controller.AdminController.mostrarAdmin_no_fallas_tecnicas"));
 
         return "admin";
     }

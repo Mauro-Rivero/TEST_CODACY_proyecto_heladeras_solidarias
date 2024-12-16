@@ -37,6 +37,7 @@ public class PermisoApertura {
     @Setter
     private LocalDateTime fechaOtorgamiento;
 
+    // TODO: Arreglar el TypeString
     private SolicitudAperturaColaborador.MotivoSolicitud motivo;
 
     private Integer cantidadViandas;

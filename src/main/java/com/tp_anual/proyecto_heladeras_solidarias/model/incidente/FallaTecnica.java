@@ -8,7 +8,38 @@ import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.Heladera;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-@Entity 
+@Entity
+@NamedNativeQuery(
+        name = "FallaTecnica.findFallasTecnicasParaTecnico",
+        query = "SELECT * FROM falla_tecnica AS f " +
+                "WHERE f.id IN (" +
+                "SELECT f0.id FROM falla_tecnica AS f0 " +
+                "INNER JOIN tecnico AS t " +
+                "ON f0.tecnico = t.id " +
+                "WHERE t.id = :tecnico)",
+        resultClass =  FallaTecnica.class
+)
+@NamedNativeQuery(
+        name = "FallaTecnica.findFallasTecnicasNoResueltas",
+        query = "SELECT * FROM falla_tecnica AS f " +
+                "WHERE f.id IN (" +
+                "SELECT f0.id FROM falla_tecnica AS f0 " +
+                "LEFT JOIN visita AS v " +
+                "ON f0.id = v.incidente " +
+                "WHERE v.id ISNULL OR v.estado = false)",
+        resultClass =  FallaTecnica.class
+)
+// TODO: El LEFT JOIN, por algún motivo, hace que se rompa cuando tenemos un array de Incidentes que incluye Fallas Técnicas y Alertas (si ponemos INNER JOIN se resuelve pero no estamos teniendo en cuenta las Fallas Técnicas que no fueron revisadas)
+@NamedNativeQuery(
+        name = "FallaTecnica.findFallasTecnicasSinTecnicoNoResueltas",
+        query = "SELECT * FROM falla_tecnica AS f " +
+                "WHERE f.id IN (" +
+                "SELECT f0.id FROM falla_tecnica AS f0 " +
+                "LEFT JOIN visita AS v " +
+                "ON f0.id = v.incidente " +
+                "WHERE (v.id ISNULL OR v.estado = false) AND f0.tecnico ISNULL)",
+        resultClass =  FallaTecnica.class
+)
 @Getter
 public class FallaTecnica extends Incidente {
     
@@ -29,5 +60,9 @@ public class FallaTecnica extends Incidente {
         colaborador = vColaborador;
         descripcion = vDescripcion;
         foto = vFoto;
+    }
+
+    public String getNombre() {
+        return "Falla Técnica";
     }
 }

@@ -49,7 +49,7 @@ public class UbicadorTecnico {
             .map(tecnico -> tecnicoService.ubicacionAprox(tecnico.getId()))
             .collect(Collectors.toCollection(ArrayList::new));
         
-        // Obtengo la distancia minima entre la Heladera y un Técnico
+        // Obtengo la distancia mínima entre la Heladera y un Técnico
         List<Double> distancias = puntosMedios.stream()
             .map(puntoMedio -> AreaService.distanciaEntre2Puntos(puntoMedio, ubicacionHeladera))
             .collect(Collectors.toCollection(ArrayList::new));

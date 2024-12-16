@@ -13,8 +13,9 @@
 <body>
 <!-- Barra superior -->
 <div class="top-bar navbar">
-    <a class="navbar-brand" th:href="@{/}">
+    <a class="navbar-brand d-flex align-items-center FC-palette" th:href="@{/}">
         <img th:src="@{/assets/logo_negro.png}" alt="Logo" height="50">
+        <p class="ps-3 titulo-header">HELADERAS <span class="FC-palette-span">SOLIDARIAS</span></p>
     </a>
     <div class="user-profile">
         <span class="material-symbols-outlined text-dark" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">engineering</span>
@@ -37,7 +38,7 @@
                 <li class="nav-item">
                     <a class="sidebar-link" href="#ver-alertas">
                         <span class="material-symbols-outlined">warning</span>
-                        Ver Alertas
+                        Ver Incidentes
                     </a>
                 </li>
                 <li class="nav-item">
@@ -50,7 +51,6 @@
         </nav>
 
         <main class="col-md-9 col-lg-10 admin-content">
-            <!-- Alertas -->
             <section id="ver-alertas" class="mt-5">
                 <h2 class="mb-4">Alertas</h2>
                 <div class="card p-4">
@@ -58,13 +58,52 @@
                         <div class="row">
                             <div class="w-100">
                                 <div class="my-4 w-100 d-flex flex-column align-items-center gap-4 alertas-container">
-                                    <div> <!-- th:if="${alertas.isEmpty()}" --> No hay alertas</div>
-                                    <div th:each="incidente : ${incidentes}" class="alerta">
+                                    <div th:if="${alertas.isEmpty()}">
+                                        <p th:text="${messageNoAlerts}"></p>
+                                    </div>
+                                    <div th:each="alerta : ${alertas}" class="alerta">
                                         <span class="material-symbols-outlined">warning</span>
                                         <div class="text-start w-100 ms-4">
-                                            <p><span class="fw-bold">Heladera:</span> <span th:text="${incidente.getHeladera().getNombre()}"></span></p>
-<!--                                            <p><span class="fw-bold">Tipo:</span> <span th:text="${}"></span></p>-->
-                                            <p><span class="fw-bold">Fecha:</span> <span th:text="${incidente.getFechaFormateada()}"></span></p>
+                                            <p><span class="fw-bold">Heladera:</span> <span th:text="${alerta.heladera.nombre}"></span></p>
+                                            <p><span class="fw-bold">Tipo:</span> <span th:text="${alerta.getTipoAlertaString()}"></span></p>
+                                            <p><span class="fw-bold">Fecha:</span> <span th:text="${alerta.getFechaFormateada()}"></span></p>
+                                        </div>
+                                        <div th:if="${!alerta.tieneTecnico()}" class="sin-tecnico">
+                                            <p class="fw-bold text-end">NO HAY TÉCNICO ASIGNADO</p>
+                                            <button th:if="${!alerta.tieneTecnico()}" class="btn btn-primary mt-2">
+                                                <a th:href="@{/tecnico/tomar-alerta{id}(id=${alerta.id})}" class="text-white text-decoration-none">ENCARGARSE</a>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="ver-fallas-tecnicas" class="mt-5">
+                <h2 class="mb-4">Fallas Técnicas</h2>
+                <div class="card p-4">
+                    <div class="container mt-0">
+                        <div class="row">
+                            <div class="w-100">
+                                <div class="my-4 w-100 d-flex flex-column align-items-center gap-4 alertas-container">
+                                    <div th:if="${fallasTecnicas.isEmpty()}" >
+                                        <p th:text="${messageNoFailures}"></p>
+                                    </div>
+                                    <div th:each="falla : ${fallasTecnicas}" class="alerta">
+                                        <span class="material-symbols-outlined">warning</span>
+                                        <div class="text-start w-100 ms-4">
+                                            <p><span class="fw-bold">Heladera:</span> <span th:text="${falla.heladera.nombre}"></span></p>
+                                            <p><span class="fw-bold">Fecha:</span> <span th:text="${falla.getFechaFormateada()}"></span></p>
+                                            <p><span class="fw-bold">Descripción:</span> <span th:text="${falla.descripcion}"></span></p>
+                                        </div>
+                                        <div th:if="${!falla.tieneTecnico()}" class="sin-tecnico">
+                                            <p class="fw-bold text-end">NO HAY TÉCNICO ASIGNADO</p>
+                                            <button th:if="${!falla.tieneTecnico()}" class="btn btn-primary mt-2">
+                                                <a th:href="@{/tecnico/tomar-falla-tecnica{id}(id=${falla.id})}" class="text-white text-decoration-none">ENCARGARSE</a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -74,20 +113,33 @@
                 </div>
             </section>
 
-            <!-- Registrar visitas -->
             <section id="cargar-visitas" class="mt-5">
                 <h2 class="mb-4">Registrar Visitas</h2>
-                <div class="card p-4">
-                    <form th:action="@{/registrar-visita}" method="POST">
+                <div class="card p-4 mb-5">
+                    <form th:action="@{/registrar-visita/guardar}" method="POST">
                         <div class="mb-3">
-                            <label for="heladera" class="form-label">Heladera</label>
-                            <select class="form-select" id="heladera" name="heladera" required>
-                                <option th:each="heladera : ${heladeras}" th:value="${heladera.id}" th:text="${heladera.nombre}"></option>
+                            <label for="incidente" class="form-label">Incidente</label>
+                            <select class="form-select" id="incidente" name="incidente" required>
+                                <option disabled selected  value="">Seleccionar un incidente</option>
+                                <optgroup label="Alertas">
+                                    <option th:each="alerta : ${alertasDelTecnico}" th:value="${alerta.id}" th:text="${alerta.heladera.nombre} + ' - ' + ${alerta.getTipoAlertaString()}"></option>
+                                </optgroup>
+                                <optgroup label="Fallas Técnicas">
+                                    <option th:each="falla : ${fallasTecnicasDelTecnico}" th:value="${falla.id}" th:text="${falla.heladera.nombre} + ' - ' + ${falla.getNombre()}"></option>
+                                </optgroup>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="descripcion" class="form-label">Descripción de la visita</label>
                             <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Imagen de la visita</label>
+                            <input name="foto" class="form-control" id="foto" type="text" placeholder="Ingrese la URL">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="estado-consulta" name="estado-consulta">
+                            <label class="form-check-label" for="estado-consulta">Pudiste arreglarlo?</label>
                         </div>
                         <button type="submit" class="btn btn-primary">Registrar</button>
                     </form>
