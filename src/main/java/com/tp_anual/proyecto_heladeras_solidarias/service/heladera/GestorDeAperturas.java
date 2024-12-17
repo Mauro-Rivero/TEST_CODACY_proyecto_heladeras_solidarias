@@ -49,12 +49,12 @@ public class GestorDeAperturas {
         }
     }
     
-    public void revisarPermisoAperturaC(Heladera heladera, ColaboradorHumano colaborador) throws PermisoAperturaAusenteException, PermisoAperturaExpiradoException {
+    public PermisoApertura revisarPermisoAperturaC(Heladera heladera, ColaboradorHumano colaborador) throws PermisoAperturaAusenteException, PermisoAperturaExpiradoException {
         TarjetaColaborador tarjetaColaborador = colaborador.getTarjeta();
 
-        PermisoApertura permisoARevisar = permisoAperturaService.obtenerUnPermisoParaTarjetaYHeladera(heladera, tarjetaColaborador);
+        PermisoApertura permisoARevisar = permisoAperturaService.obtenerPermisoMasRecienteParaTarjetaYHeladera(heladera, tarjetaColaborador);
 
-        if (permisoARevisar == null) {
+        if (permisoARevisar == null || permisoARevisar.getRevocado() == 1) {
             log.log(Level.SEVERE, i18nService.getMessage("heladera.GestorDeAperturas.revisarPermisoAperturaC_err", colaborador.getPersona().getNombre(2), heladera.getNombre()));
             throw new PermisoAperturaAusenteException();
         }
@@ -69,6 +69,8 @@ public class GestorDeAperturas {
             log.log(Level.SEVERE, i18nService.getMessage("heladera.GestorDeAperturas.revisarPermisoAperturaC_err", colaborador.getPersona().getNombre(2), heladera.getNombre()));
             throw new PermisoAperturaExpiradoException();
         }
+
+        return permisoARevisar;
     }
 
     public void revisarPermisoAperturaP(Heladera heladera) throws HeladeraVaciaIntentoRetiroPESVException {

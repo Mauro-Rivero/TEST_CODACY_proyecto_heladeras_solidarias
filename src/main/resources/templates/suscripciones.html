@@ -19,7 +19,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-9 text-center">
-                <h1 class="mb-0 fw-bold">TUS HELADERAS</h1>
+                <h1 class="mb-0 fw-bold">TUS SUSCRIPCIONES</h1>
                 <div class="fw-bold mt-0 text-muted" style="font-size: 20px" th:text="${colaborador.persona.getNombre(2)}"></div>
 
                 <div th:if="${message}" class="alert alert-danger mt-3" role="alert">
@@ -29,38 +29,29 @@
                 <div class="card my-4">
                     <div class="table-responsive">
                         <table class="table table-bordered">
-
                             <thead>
-                            <tr>
-                                <th>Heladera</th>
-                                <th>Ubicación</th>
-                                <th>Estado</th>
-                                <th>Fecha de Apertura</th>
-                                <th>Acciones</th>
-                            </tr>
+                                <tr>
+                                    <th>Heladera</th>
+                                    <th>Condición</th>
+                                    <th>Acciones</th>
+                                </tr>
                             </thead>
-
                             <tbody>
-                            <tr class="fila-heladera" th:each="heladera : ${heladeras}">
-                                <td class="text-nowrap" th:text="${heladera.getNombre()}"></td>
-                                <td class="text-nowrap" th:text="${heladera.getUbicacion().getDireccionCompleta()}"></td>
-                                <td class="text-nowrap" th:text="${heladera.getEstadoString()}"></td>
-                                <td class="text-nowrap" th:text="${heladera.getFechaAperturaFormateada()}"></td>
+                            <tr class="fila-heladera" th:each="suscripcion : ${suscripciones}">
+                                <td class="text-nowrap" th:text="${suscripcion.getHeladera().getNombre()}"></td>
+                                <td class="text-nowrap" th:text="${suscripcion.getCondicion()}"></td>
 
                                 <td class="d-flex align-items-center justify-content-center gap-3">
 
                                     <button class="btn btn-primary"
-                                       data-bs-toggle="modal" data-bs-target="#formModal"
-                                        th:data-id="${heladera.id}"
-                                        th:data-nombre="${heladera.nombre}"
-                                        th:data-direccion="${heladera.ubicacion.direccionCompleta}"
-                                        th:data-codigo-postal="${heladera.ubicacion.codigoPostal}"
-                                        th:data-ciudad="${heladera.ubicacion.ciudad}"
-                                        onclick="abrirModal(this)">
+                                            data-bs-toggle="modal" data-bs-target="#formModal"
+                                            th:data-id="${suscripcion.id}"
+                                            th:data-valorCondicion="${suscripcion.getValorCondicion()}"
+                                            onclick="abrirModal(this)">
                                         Editar
 
                                     </button>
-                                    <a class="btn btn-outline-danger" th:href="@{/heladera/borrar/{id}(id=${heladera.id})}">
+                                    <a class="btn btn-outline-danger" th:href="@{/suscripcion/borrar/{id}(id=${suscripcion.id})}">
                                         Borrar
                                     </a>
 
@@ -83,39 +74,12 @@
                 </div>
                 <div class="modal-body">
                     <!-- Formulario dentro del modal -->
-                    <form  th:action="@{/modificar-heladera/guardar}" method="POST">
-                        <input type="hidden" id="heladera-id" name="heladera-id" value="">
+                    <form  th:action="@{/modificar-suscripcion/guardar}" method="POST">
+                        <input type="hidden" id="suscripcion-id" name="suscripcion-id" value="">
                         <div class="info-section">
-                            <label for="nombre" class="form-label">Nombre: </label>
+                            <label for="nuevo-valor" class="form-label">Nuevo valor: </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="nombre" name="nombre" readonly>
-                                <button class="btn btn-outline-secondary btn-edit" type="button">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="info-section">
-                            <label for="direccion" class="form-label">Dirección:</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="direccion" name="direccion" readonly>
-                                <button class="btn btn-outline-secondary btn-edit" type="button">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="info-section">
-                            <label for="ciudad" class="form-label">Ciudad:</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="ciudad" name="ciudad" readonly>
-                                <button class="btn btn-outline-secondary btn-edit" type="button">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="info-section">
-                            <label for="codigo-postal" class="form-label">Código Postal:</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="codigo-postal" name="codigo-postal" readonly>
+                                <input type="text" class="form-control" id="nuevo-valor" name="nuevo-valor" readonly>
                                 <button class="btn btn-outline-secondary btn-edit" type="button">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
@@ -146,16 +110,10 @@
 
     function abrirModal(button) {
         const id = button.getAttribute('data-id');
-        const nombre = button.getAttribute('data-nombre');
-        const direccion = button.getAttribute('data-direccion');
-        const codigoPostal = button.getAttribute('data-codigo-postal');
-        const ciudad = button.getAttribute('data-ciudad');
+        const valorCondicion = button.getAttribute('data-valorCondicion');
 
-        document.getElementById('heladera-id').value = id;
-        document.getElementById('nombre').value = nombre;
-        document.getElementById('direccion').value = direccion;
-        document.getElementById('codigo-postal').value = codigoPostal;
-        document.getElementById('ciudad').value = ciudad;
+        document.getElementById('suscripcion-id').value = id;
+        document.getElementById('nuevo-valor').value = valorCondicion;
     }
 </script>
 

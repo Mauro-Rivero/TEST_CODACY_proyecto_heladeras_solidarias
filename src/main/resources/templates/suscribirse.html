@@ -21,12 +21,12 @@
                     <h2 class="text-muted FC-palette-span">a una heladera</h2>
                     <div class="d-flex align-items-center justify-content-center text-center">
                         <div class="card my-4" style="max-width: 500px;">
-                            <form th:action="@{/suscribirse/guardar}" method="POST">
+                            <form th:action="@{/suscribirse/guardar}" id="suscribirForm" method="POST">
                                 <div class="mb-3 text-start">
                                     <label for="heladera" class="form-label">Heladera a suscribirse</label>
                                     <select id="heladera" name="heladera" class="form-select select-heladeras" onchange="actualizarMaximo()">
                                         <option selected disabled value="">Seleccione una heladera</option>
-                                        <option th:each="heladera : ${heladeras}" th:value="${heladera.id}" th:data-max="${heladera.capacidad}" th:text="${heladera.nombre}"></option>
+                                        <option th:each="heladera : ${heladeras}" th:value="${heladera.id}" th:data-max="${heladera.capacidad}" th:text="${heladera.nombre} + ' | Capacidad: ' + ${heladera.capacidad}"></option>
                                     </select>
                                 </div>
                                 <div class="mb-3 text-start">
@@ -47,11 +47,11 @@
                                 </div>
                                 <div id="min-container" class="mb-3 text-start d-none">
                                     <label for="limite-inferior" class="form-label">Mínimo de viandas</label>
-                                    <input type="number" th:min="0" id="limite-inferior" name="limite-inferior" class="form-control" placeholder="Ingrese el mínimo">
+                                    <input type="number" min="0" id="limite-inferior" name="limite-inferior" class="form-control" placeholder="Ingrese el mínimo">
                                 </div>
                                 <div id="max-container" class="mb-3 text-start d-none">
                                     <label for="limite-superior" class="form-label">Máximo de viandas</label>
-                                    <input type="number" th:min="1" id="limite-superior" name="limite-superior" class="form-control" placeholder="Ingrese el máximo">
+                                    <input type="number" min="1" id="limite-superior" name="limite-superior" class="form-control" placeholder="Ingrese el máximo">
                                 </div>
 
                                 <div class="mb-3 text-start d-flex gap-2">
@@ -84,6 +84,7 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:src="@{/js/cerrar_sesion.js}"></script>
     <script th:src="@{/js/recomendador_heladeras.js}"></script>
     <script>
@@ -125,6 +126,32 @@
                 inputCantidadMax.placeholder = `Ingrese hasta ${maximo} unidades`;
             }
         }
+
+        document.getElementById('suscribirForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Confirmar Suscripción',
+                text: `¿Estás seguro de suscribirte a esta heladera?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, suscribirme',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: '¡Suscripción realizada!',
+                        text: 'Gracias por tu suscripción.',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then( () => {
+                        event.target.submit();
+                    })
+                }
+            });
+        })
     </script>
 </body>
 </html>

@@ -13,6 +13,6 @@ import java.util.Optional;
 
 public interface PermisoAperturaRepository extends JpaRepository<PermisoApertura, Long> {
 
-    @Query(nativeQuery = true, name = "PermisoApertura.findPermisoParaTarjetaAndHeladera")
-    Optional<PermisoApertura> findPermisoParaTarjetaAndHeladera(@Param("heladera") Long heladeraId, @Param("tarjeta") String tarjetaCodigo);
+    @Query(nativeQuery = true, name = "PermisoApertura.findPermisoMasRecienteParaTarjetaAndHeladera")
+    Optional<PermisoApertura> findPermisoMasRecienteParaTarjetaAndHeladera(@Param("heladera") Long heladeraId, @Param("tarjeta") String tarjetaCodigo);
 }

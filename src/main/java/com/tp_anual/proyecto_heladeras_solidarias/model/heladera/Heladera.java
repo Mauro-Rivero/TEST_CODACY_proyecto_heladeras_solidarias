@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.vianda.Vianda;
 import com.tp_anual.proyecto_heladeras_solidarias.model.incidente.Incidente;
 import com.tp_anual.proyecto_heladeras_solidarias.model.ubicacion.Ubicacion;
@@ -51,6 +52,7 @@ public class Heladera implements HeladeraObserver {    // Implementa una Interfa
 
     protected Float tempMax;    // final
 
+    @JsonIgnore
     @OneToMany(mappedBy = "heladera", fetch = FetchType.EAGER)  // Quiero que los cambios en Vianda se hagan manualmente, y no que se propaguen
     protected List<Vianda> viandas;    // final
 

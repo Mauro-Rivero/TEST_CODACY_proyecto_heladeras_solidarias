@@ -12,10 +12,11 @@ import jakarta.persistence.*;
 
 @Entity
 @NamedNativeQuery(
-    name = "PermisoApertura.findPermisoParaTarjetaAndHeladera",
+    name = "PermisoApertura.findPermisoMasRecienteParaTarjetaAndHeladera",
     query = "SELECT * FROM permiso_apertura AS p " +
             "WHERE p.heladera = :heladera " +
             "AND p.tarjeta = :tarjeta " +
+            "ORDER BY p.fecha_otorgamiento DESC " +
             "LIMIT 1",
     resultClass = PermisoApertura.class
 )
@@ -37,7 +38,7 @@ public class PermisoApertura {
     @Setter
     private LocalDateTime fechaOtorgamiento;
 
-    // TODO: Arreglar el TypeString
+    @Enumerated(EnumType.STRING)
     private SolicitudAperturaColaborador.MotivoSolicitud motivo;
 
     private Integer cantidadViandas;
@@ -45,17 +46,26 @@ public class PermisoApertura {
     @Setter
     private Boolean otorgado;
 
+    // 0 es posible de revocar, 1 es revocado y 2 es usado (imposible de revocar)
+    @Setter
+    private Integer revocado;
+
     public PermisoApertura() {}
 
-    public PermisoApertura(Heladera vHeladeraPermitida, LocalDateTime vFechaOtorgamiento, SolicitudAperturaColaborador.MotivoSolicitud vMotivo, Integer vCantidadViandas, Boolean vOtorgado) {
+    public PermisoApertura(Heladera vHeladeraPermitida, LocalDateTime vFechaOtorgamiento, SolicitudAperturaColaborador.MotivoSolicitud vMotivo, Integer vCantidadViandas, Boolean vOtorgado, Integer vRevocado) {
         heladeraPermitida = vHeladeraPermitida;
         fechaOtorgamiento = vFechaOtorgamiento;
         motivo = vMotivo;
         cantidadViandas = vCantidadViandas;
         otorgado = vOtorgado;
+        revocado = vRevocado;
     }
 
     public void revocarPermiso() {
-        setOtorgado(false);
+        setRevocado(1);
+    }
+
+    public void impedirRevocamientoPermiso() {
+        setRevocado(2);
     }
 }

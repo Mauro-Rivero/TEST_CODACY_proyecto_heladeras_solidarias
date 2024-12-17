@@ -1,6 +1,7 @@
 package com.tp_anual.proyecto_heladeras_solidarias.service.tecnico;
 
 import com.tp_anual.proyecto_heladeras_solidarias.model.incidente.Incidente;
+import com.tp_anual.proyecto_heladeras_solidarias.model.tecnico.Tecnico;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.model.tecnico.Visita;
 import com.tp_anual.proyecto_heladeras_solidarias.repository.tecnico.VisitaRepository;
@@ -33,6 +34,10 @@ public class VisitaService {
         return new ArrayList<>(visitaRepository.findAll());
     }
 
+    public List<Visita> obtenerVisitasPorTecnico(Tecnico tecnico) {
+        return new ArrayList<>(visitaRepository.findByTecnico(tecnico));
+    }
+
     public Visita obtenerVisitaNoRevisadaMasRecientePorIncidente(Incidente incidente) {
         return visitaRepository.findByIncidenteAndRevisadaFalseOrderByFechaDesc(incidente);
     }
@@ -41,6 +46,12 @@ public class VisitaService {
 
     public Visita guardarVisita(Visita visita) {
         return visitaRepository.save(visita);
+    }
+
+    public void eliminarVisitas(List<Visita> visitas) {
+        if (visitas != null && !visitas.isEmpty()) {
+            visitaRepository.deleteAll(visitas);
+        }
     }
 
     public void seReviso(Long visitaId) {

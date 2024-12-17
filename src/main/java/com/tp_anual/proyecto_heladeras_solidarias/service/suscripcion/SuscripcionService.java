@@ -1,5 +1,7 @@
 package com.tp_anual.proyecto_heladeras_solidarias.service.suscripcion;
 
+import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.Colaborador;
+import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.ColaboradorHumano;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.Heladera;
 import com.tp_anual.proyecto_heladeras_solidarias.model.suscripcion.Suscripcion;
@@ -34,7 +36,11 @@ public class SuscripcionService {
     }
 
     public List<Suscripcion> obtenerSuscripcionesPorHeladera(Heladera heladera) {
-        return new ArrayList<>(suscripcionRepository.findByHeladeraId(heladera.getId()));
+        return new ArrayList<>(suscripcionRepository.findByHeladera(heladera));
+    }
+
+    public List<Suscripcion> obtenerSuscripcionesPorColaborador(ColaboradorHumano colaborador) {
+        return new ArrayList<>(suscripcionRepository.findByColaborador(colaborador));
     }
 
     public Suscripcion guardarSuscripcion(Suscripcion suscripcion) {

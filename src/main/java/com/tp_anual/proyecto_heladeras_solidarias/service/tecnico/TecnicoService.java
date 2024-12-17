@@ -54,6 +54,8 @@ public class TecnicoService {
          return tecnicoRepository.saveAndFlush(tecnico);
     }
 
+    public void eliminarTecnico(Long tecnicoId) { tecnicoRepository.deleteById(tecnicoId); }
+
     public Tecnico asignarUsuario(Long tecnicoId, Usuario usuario) {
         Tecnico tecnico = obtenerTecnico(tecnicoId);
         tecnico.setUsuario(usuario);

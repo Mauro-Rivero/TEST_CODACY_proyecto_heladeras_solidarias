@@ -28,7 +28,7 @@ public abstract class Suscripcion {
     @JoinColumn(name = "heladera")
     private Heladera heladera;  // final
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "medio_de_contacto")
     @Setter
     private MedioDeContacto medioDeContactoElegido; // El Colaborador elige por qué Medio de Contacto ser notificado sobre cuestiones de la Suscripción
@@ -46,4 +46,8 @@ public abstract class Suscripcion {
         heladera = vHeladera;
         medioDeContactoElegido = vMedioDeContactoElegido;
     }
+
+    public abstract String getCondicion();
+
+    public abstract Integer getValorCondicion();
 }

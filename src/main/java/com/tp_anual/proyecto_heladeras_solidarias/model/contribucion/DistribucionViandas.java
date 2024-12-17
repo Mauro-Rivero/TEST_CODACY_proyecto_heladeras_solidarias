@@ -72,4 +72,5 @@ public class DistribucionViandas extends Contribucion {
 
     public void confirmarRetiro() {setRetiroRealizado(true);}
 
+    public void caducar() {setCaducada(true);}
 }

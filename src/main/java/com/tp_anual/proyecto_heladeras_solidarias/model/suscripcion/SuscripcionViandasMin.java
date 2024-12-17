@@ -28,4 +28,14 @@ public class SuscripcionViandasMin extends Suscripcion {
         super(vColaborador, vHeladera, vMedioDeContactoElegido);
         viandasDisponiblesMin = vViandasDisponiblesMin;
     }
+
+    @Override
+    public String getCondicion() {
+        return "Heladera vaciándose: (" + viandasDisponiblesMin + ")";
+    }
+
+    @Override
+    public Integer getValorCondicion() {
+        return viandasDisponiblesMin;
+    }
 }

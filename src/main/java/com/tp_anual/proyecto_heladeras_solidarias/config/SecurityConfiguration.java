@@ -48,6 +48,7 @@ public class SecurityConfiguration {
                                         new AntPathRequestMatcher("/donar-vianda"),
                                         new AntPathRequestMatcher("/registrar-persona-vulnerable"),
                                         new AntPathRequestMatcher("/suscribirse"),
+                                        new AntPathRequestMatcher("/suscripciones"),
                                         new AntPathRequestMatcher("/perfil-persona-humana"))
                         .hasAuthority("ROL_CH")
                         // Endpoints exclusivos de 'ROL_CJ' (Colaborador Jurídico)

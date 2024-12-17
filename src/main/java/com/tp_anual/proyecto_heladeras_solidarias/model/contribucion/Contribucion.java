@@ -38,6 +38,9 @@ public abstract class Contribucion {
     @Setter
     protected Boolean yaSumoPuntos;
 
+    @Setter
+    private Boolean caducada;
+
     protected Contribucion() {}
 
     protected Contribucion(Colaborador vColaborador, LocalDateTime vFechaContribucion) {
@@ -45,6 +48,7 @@ public abstract class Contribucion {
         fechaContribucion = vFechaContribucion;
         completada = false;
         yaSumoPuntos = false;
+        caducada = false;
     }
 
     public String getNombre() {

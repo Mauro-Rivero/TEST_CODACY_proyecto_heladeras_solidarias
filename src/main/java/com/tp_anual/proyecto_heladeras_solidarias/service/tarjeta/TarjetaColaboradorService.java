@@ -100,7 +100,9 @@ public class TarjetaColaboradorService extends TarjetaService {
         TarjetaColaborador tarjetaColaborador = obtenerTarjeta(tarjetaColaboradorId);
         ColaboradorHumano titular = tarjetaColaborador.getTitular();
 
-        gestorDeAperturas.revisarPermisoAperturaC(heladera, titular);
+        PermisoApertura permisoApertura = gestorDeAperturas.revisarPermisoAperturaC(heladera, titular);
+
+        permisoAperturaService.impedirRevocamientoPermisoApertura(permisoApertura.getId());
 
         AperturaColaborador apertura = new AperturaColaborador(LocalDateTime.now(), heladera, titular);
         accionHeladeraService.guardarAccionHeladera(apertura);

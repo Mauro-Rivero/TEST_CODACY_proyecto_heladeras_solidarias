@@ -39,6 +39,10 @@ public class NotificadorDeEstado extends Notificador {
         switch(condicion) {
 
             case VIANDAS_MIN -> {
+
+                if (heladerasCercanas == null || heladerasCercanas.isEmpty())
+                    return;
+
                 // Obtengo la Heladera más llena
                 Heladera heladeraMasLlena = ubicadorHeladera.obtenerHeladeraMasLlena(heladerasCercanas);
 
@@ -51,6 +55,10 @@ public class NotificadorDeEstado extends Notificador {
             }
 
             case VIANDAS_MAX -> {
+
+                if (heladerasCercanas == null || heladerasCercanas.isEmpty())
+                    return;
+
                 // Obtengo la Heladera menos llena
                 Heladera heladeraMenosLlena = ubicadorHeladera.obtenerHeladeraMenosLlena(heladerasCercanas);
 
@@ -63,6 +71,17 @@ public class NotificadorDeEstado extends Notificador {
             }
 
             case DESPERFECTO -> {
+
+                if (heladerasCercanas == null || heladerasCercanas.isEmpty()) {
+                    enviarNotificacion(
+                            medioDeContacto,
+                            i18nService.getMessage("notificador.NotificadorDeEstado.notificarEstado_outer_message_d_nhc_title",
+                                    heladera.getNombre()),
+                            i18nService.getMessage("notificador.NotificadorDeEstado.notificarEstado_outer_message_d_nhc_body"));
+
+                    return;
+                }
+
                 enviarNotificacion(
                 medioDeContacto,
                 i18nService.getMessage("notificador.NotificadorDeEstado.notificarEstado_outer_message_d_title",

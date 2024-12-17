@@ -41,17 +41,28 @@ public class DonacionViandaService extends ContribucionService {
         return donacionViandaRepository.findById(donacionViandaId).orElseThrow(() -> new EntityNotFoundException(i18nService.getMessage("obtenerEntidad_exception")));
     }
 
+    public DonacionVianda obtenerDonacionViandaMasRecientePorColaborador(ColaboradorHumano colaborador) {
+        return donacionViandaRepository.findTopByColaboradorOrderByFechaContribucionDesc(colaborador);
+    }
+
     public List<DonacionVianda> obtenerDonacionesViandaQueSumanPuntos() {
         return new ArrayList<>(donacionViandaRepository.findByYaSumoPuntosFalse());
     }
 
     public List<DonacionVianda> obtenerDonacionesViandaNoConfirmadasParaColaborador(ColaboradorHumano colaborador) {
-        return new ArrayList<>(donacionViandaRepository.findByColaboradorAndCompletadaFalse(colaborador));
+        return new ArrayList<>(donacionViandaRepository.findByColaboradorAndCompletadaFalseAndCaducadaFalse(colaborador));
     }
 
     @Override
     public DonacionVianda guardarContribucion(Contribucion donacionVianda) {
         return donacionViandaRepository.saveAndFlush((DonacionVianda) donacionVianda);
+    }
+
+    public void caducar(Long donacionViandaId) {
+        DonacionVianda donacionVianda = obtenerContribucion(donacionViandaId);
+
+        donacionVianda.caducar();
+        guardarContribucion(donacionVianda);
     }
 
     @Override

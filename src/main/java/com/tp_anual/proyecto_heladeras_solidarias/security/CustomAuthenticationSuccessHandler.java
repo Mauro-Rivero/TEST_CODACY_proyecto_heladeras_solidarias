@@ -43,6 +43,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         Colaborador colaborador = colaboradorService.obtenerColaboradorPorEMail(email);
 
+        HttpSession session = request.getSession();
+        session.setAttribute("email-auth2", email);
+        session.setAttribute("nombre-humano-auth2", nombre);
+        session.setAttribute("apellido-humano-auth2", apellido);
+
         if (colaborador == null) {
             String username = customUserDetailsService.generarUsername(nombre, apellido);
             Usuario usuarioACrear = new Usuario(username, username, "ROL_GENERICO");
@@ -54,7 +59,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
             SecurityContextHolder.getContext().setAuthentication(newAuth);
 
-            HttpSession session = request.getSession();
             session.setAttribute("username", username);
 
             redirectUrl = "/completar-datos-seleccion-persona";

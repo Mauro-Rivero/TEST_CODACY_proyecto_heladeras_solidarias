@@ -35,7 +35,7 @@ public class HeladeraViewController {
     }
 
     @GetMapping("/heladeras")
-    public String mostrarContribuciones(Model model) {
+    public String mostrarHeladeras(Model model) {
         setPaginaActual("/heladeras", model);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -51,7 +51,7 @@ public class HeladeraViewController {
         return "heladeras";
     }
 
-    @PostMapping("/heladeras/guardar")
+    @PostMapping("/modificar-heladera/guardar")
     public String modificarHeladera(
         @RequestParam("heladera-id") Long heladeraId,
         @RequestParam("nombre") String nombre,
@@ -70,7 +70,7 @@ public class HeladeraViewController {
         return "redirect:/heladeras";
     }
 
-    @GetMapping("/heladeras/borrar/{id}")
+    @GetMapping("/heladera/borrar/{id}")
     public String borrarHeladera(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (!heladeraService.estaVacia(id)) {
             redirectAttributes.addFlashAttribute("message", i18nService.getMessage("controller.HeladeraController.borrarHeladera_err"));

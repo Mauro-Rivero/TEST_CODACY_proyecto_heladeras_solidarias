@@ -45,17 +45,23 @@
                                        th:href="@{/confirmar-contribucion/{id}(id=${contribucion.id})}"
                                        class="btn btn-primary">Confirmar</a>
 
-                                    <a th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Donar Vianda'}"
+                                    <a th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Donar Vianda'} and not ${contribucion.caducada}"
                                        th:href="@{/confirmar-ingreso-vianda/{id}(id=${contribucion.id})}"
                                        class="btn btn-primary">Confirmar</a>
 
-                                    <a th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Distribuir Viandas'} and not ${contribucion.colaborador.poseeViandas}"
+                                    <span th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Donar Vianda'} and ${contribucion.caducada}"
+                                          class="btn btn-danger text-nowrap" style="pointer-events: none;">Caducada</span>
+
+                                    <a th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Distribuir Viandas'} and not ${contribucion.colaborador.poseeViandas} and not ${contribucion.caducada}"
                                        th:href="@{/confirmar-retiro-viandas/{id}(id=${contribucion.id})}"
                                        class="btn btn-primary">Confirmar retiro</a>
 
-                                    <a th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Distribuir Viandas'} and ${contribucion.colaborador.poseeViandas}"
+                                    <a th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Distribuir Viandas'} and ${contribucion.colaborador.poseeViandas} and not ${contribucion.caducada}"
                                        th:href="@{/confirmar-ingreso-viandas/{id}(id=${contribucion.id})}"
                                        class="btn btn-primary">Confirmar ingreso</a>
+
+                                    <span th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Distribuir Viandas'} and ${contribucion.caducada}"
+                                          class="btn btn-danger text-nowrap" style="pointer-events: none;">Caducada</span>
 
                                     <a th:if="${!contribucion.completada} and ${contribucion.getNombre() == 'Hacerse Cargo de Heladera'}"
                                        th:href="@{/confirmar-colocacion-heladera/{id}(id=${contribucion.id})}"
@@ -71,44 +77,7 @@
             </div>
         </div>
     </div>
-
-<!--<script>-->
-<!--    async function confirmarContribucion(id) {-->
-<!--        try {-->
-<!--            let response = await fetch('/confirmar-contribucion/${id}', {-->
-<!--                method: 'GET',-->
-<!--                headers: {-->
-<!--                    'Content-Type': 'application/json',-->
-<!--                },-->
-<!--            });-->
-
-<!--            if (response.ok) {-->
-<!--                Swal.fire({-->
-<!--                    title: '¡Contribución confirmada!',-->
-<!--                    text: 'Se confirmó la contribución con éxito',-->
-<!--                    icon: 'success',-->
-<!--                    confirmButtonText: 'Aceptar'-->
-<!--                }).then(() => {-->
-<!--                    window.location.reload();-->
-<!--                });-->
-<!--            } else {-->
-<!--                Swal.fire({-->
-<!--                    title: 'Error',-->
-<!--                    text: 'Hubo un error al confirmar la contribución. Intenta nuevamente.',-->
-<!--                    icon: 'error',-->
-<!--                    confirmButtonText: 'Aceptar'-->
-<!--                });-->
-<!--            }-->
-<!--        } catch (error) {-->
-<!--            Swal.fire({-->
-<!--                title: 'Error de conexión',-->
-<!--                text: 'No se pudo conectar con el servidor. Intenta nuevamente más tarde.',-->
-<!--                icon: 'error',-->
-<!--                confirmButtonText: 'Aceptar'-->
-<!--            });-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
+<main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 

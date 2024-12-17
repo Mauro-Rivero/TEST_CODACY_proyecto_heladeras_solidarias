@@ -58,7 +58,15 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/completar-datos-persona-humana")
-    public String mostrarRegistroPersonaHumanaRellenoDatos(Model model) {
+    public String mostrarRegistroPersonaHumanaRellenoDatos(Model model, HttpSession session) {
+        String nombre = (String) session.getAttribute("nombre-humano-auth2");
+        String apellido = (String) session.getAttribute("apellido-humano-auth2");
+        String correo = (String) session.getAttribute("email-auth2");
+
+        model.addAttribute("nombreAuth2", nombre);
+        model.addAttribute("apellidoAuth2", apellido);
+        model.addAttribute("correoAuth2", correo);
+
         model.addAttribute("emails", eMailService.obtenerEMails());
         model.addAttribute("message", i18nService.getMessage("controller.Authcontroller.mostrarRegistroPersonaHumana"));
         return "registro-persona-humana-auth2";
@@ -121,7 +129,11 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/completar-datos-persona-juridica")
-    public String mostrarRegistroPersonaJuridicaRellenoDatos(Model model) {
+    public String mostrarRegistroPersonaJuridicaRellenoDatos(Model model, HttpSession session) {
+        String correo = (String) session.getAttribute("email-auth2");
+
+        model.addAttribute("correoAuth2", correo);
+
         model.addAttribute("emails", eMailService.obtenerEMails());
         model.addAttribute("message", i18nService.getMessage("controller.Authcontroller.mostrarRegistroPersonaHumana"));
         return "registro-persona-juridica-auth2";

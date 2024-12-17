@@ -8,11 +8,12 @@
 </head>
 
 <body>
+
 <header th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center FC-palette" th:href="@{/}">
-                <img th:src="@{/assets/logo_negro.png}" alt="Logo" height="50">
+                <img th:src="@{/assets/logo_negro.png}" alt="Logo" height="45" width="45">
                 <p class="ps-3 titulo-header">HELADERAS <span class="FC-palette-span">SOLIDARIAS</span></p>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,21 +55,27 @@
                     </a>
                 </div>
 
-                <!-- Mostrar perfil si está logueado -->
-                <div class="d-flex flex-column ms-lg-3 align-items-center usuario-profile" sec:authorize="isAuthenticated()">
-                    <span class="icon-perfil material-symbols-outlined text-dark" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
-                        account_circle
-                    </span>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <div class="dropdown text-end ms-3" sec:authorize="isAuthenticated()">
+                    <a sec:authorize="hasAuthority('ROL_CJ') or hasAuthority('ROL_CH')" href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img th:src="@{/assets/icon-perfil.png}" alt="profile" width="35" height="35" class="rounded-circle">
+                    </a>
+                    <a sec:authorize="hasAuthority('ROL_ADMIN')" href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img th:src="@{/assets/icon-perfil-admin.png}" alt="profile" width="35" height="35" class="rounded-circle">
+                    </a>
+                    <a sec:authorize="hasAuthority('ROL_T')" href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img th:src="@{/assets/icon-perfil-tecnico.png}" alt="profile" width="35" height="35" class="rounded-circle">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end text-small">
+                        <li><span class="dropdown-item fw-bold cursor-text" sec:authentication="principal.username"></span></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li sec:authorize="hasAuthority('ROL_CH')"><a th:href="@{/perfil-persona-humana}" class="dropdown-item">Modificar perfil</a></li>
                         <li sec:authorize="hasAuthority('ROL_CJ')"><a th:href="@{/perfil-persona-juridica}" class="dropdown-item">Modificar perfil</a></li>
                         <li sec:authorize="hasAuthority('ROL_CH') or hasAuthority('ROL_CJ')"><a th:href="@{/contribuciones}" class="dropdown-item">Ver mis contribuciones</a></li>
+                        <li sec:authorize="hasAuthority('ROL_CH')"><a th:href="@{/suscripciones}" class="dropdown-item">Ver mis suscripciones</a></li>
                         <li sec:authorize="hasAuthority('ROL_CJ')"><a th:href="@{/heladeras}" class="dropdown-item">Ver mis heladeras</a></li>
+                        <li sec:authorize="hasAuthority('ROL_CJ') or hasAuthority('ROL_CH')"><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item cerrar-sesion" th:href="@{/logout}">Cerrar Sesión</a></li>
                     </ul>
-                    <div>
-                        <span sec:authentication="principal.username"></span>
-                    </div>
                 </div>
             </div>
         </div>

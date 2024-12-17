@@ -82,9 +82,11 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-3">
-                <label for="correo" class="form-label">Email</label>
-                <input name="correo" type="email" class="form-control" id="correo" placeholder="Ej: juanperez@gmail.com" required>
+            <div class="info-section not-allowed">
+                <label for="correo">Email</label>
+                <div class="input-group">
+                    <input type="email" class="form-control" id="correo" name="correo" th:value="${correoAuth2}" readonly>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
@@ -92,13 +94,7 @@
                     <div class="input-group-append"></div>
                     <input name="password" type="password" class="form-control" id="password" required>
                     <div class="invalid-feedback"></div>
-                    <!--                        <button class="btn toggle-password" type="button">-->
-                    <!--                            <span class="material-symbols-outlined toggle-pass-icon">-->
-                    <!--                                visibility-->
-                    <!--                            </span>-->
-                    <!--                        </button>-->
                 </div>
-
             </div>
             <button type="submit" class="btn btn-dark w-100">Continuar</button>
         </form>

@@ -12,5 +12,7 @@ public interface DonacionViandaRepository extends JpaRepository<DonacionVianda, 
     
     List<DonacionVianda> findByYaSumoPuntosFalse();
 
-    List<DonacionVianda> findByColaboradorAndCompletadaFalse(Colaborador colaborador);
+    List<DonacionVianda> findByColaboradorAndCompletadaFalseAndCaducadaFalse(Colaborador colaborador);
+
+    DonacionVianda findTopByColaboradorOrderByFechaContribucionDesc(Colaborador colaborador);
 }

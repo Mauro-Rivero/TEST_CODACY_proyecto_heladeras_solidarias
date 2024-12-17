@@ -11,20 +11,8 @@
     <link rel="stylesheet" th:href="@{/css/components.css}">
 </head>
 <body>
-<!-- Barra superior -->
-<div class="top-bar navbar">
-    <a class="navbar-brand d-flex align-items-center FC-palette" th:href="@{/}">
-        <img th:src="@{/assets/logo_negro.png}" alt="Logo" height="50">
-        <p class="ps-3 titulo-header">HELADERAS <span class="FC-palette-span">SOLIDARIAS</span></p>
-    </a>
-    <div class="user-profile">
-        <span class="material-symbols-outlined text-dark" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">engineering</span>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item cerrar-sesion" th:href="@{/logout}">Cerrar Sesión</a></li>
-        </ul>
-        <span class="text-dark fw-light">Técnico</span>
-    </div>
-</div>
+
+<div th:replace="~{fragments/panel-header :: panel-header}"></div>
 
 <div class="container-fluid">
     <div class="row">

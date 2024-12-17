@@ -145,8 +145,8 @@ public class HeladeraService {
                 }
 
                 case SuscripcionDesperfecto suscripcionDesperfecto -> {
-                    // Verifico si hay un desperfecto
-                    if (!heladera.getEstado())
+                    // Verifico si hay un desperfecto (y que la Heladera tenga Viandas)
+                    if (!heladera.getEstado() && !estaVacia(heladeraId))
                         reportarEstadoSegunCondicionSuscripcion(heladeraId, suscripcion.getMedioDeContactoElegido(), Suscripcion.CondicionSuscripcion.DESPERFECTO);
                 }
 

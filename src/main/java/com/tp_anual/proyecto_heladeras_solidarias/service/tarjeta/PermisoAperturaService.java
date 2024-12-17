@@ -1,5 +1,10 @@
 package com.tp_anual.proyecto_heladeras_solidarias.service.tarjeta;
 
+import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.ColaboradorHumano;
+import com.tp_anual.proyecto_heladeras_solidarias.model.contribucion.DistribucionViandas;
+import com.tp_anual.proyecto_heladeras_solidarias.model.contribucion.DonacionVianda;
+import com.tp_anual.proyecto_heladeras_solidarias.service.contribucion.DistribucionViandasService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.contribucion.DonacionViandaService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.Heladera;
 import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.acciones_en_heladera.SolicitudAperturaColaborador;
@@ -17,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -33,13 +40,19 @@ public class PermisoAperturaService {
 
     private final I18nService i18nService;
 
-    public PermisoAperturaService(PermisoAperturaRepository vPermisoAperturaRepository, TarjetaColaboradorRepository vTarjetaColaboradorRepository, HeladeraService vHeladeraService, @Value("#{3}") /* 3 horas en horas */ Long vRetrasoRevocacion, I18nService vI18nService) {
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
+    private final DonacionViandaService donacionViandaService;
+    private final DistribucionViandasService distribucionViandasService;
+
+    public PermisoAperturaService(PermisoAperturaRepository vPermisoAperturaRepository, TarjetaColaboradorRepository vTarjetaColaboradorRepository, HeladeraService vHeladeraService, @Value("#{3}") /* 3 horas en horas */ Long vRetrasoRevocacion, I18nService vI18nService, DonacionViandaService donacionViandaService, DistribucionViandasService distribucionViandasService) {
         permisoAperturaRepository = vPermisoAperturaRepository;
         tarjetaColaboradorRepository = vTarjetaColaboradorRepository;
         heladeraService = vHeladeraService;
         retrasoRevocacion = vRetrasoRevocacion;
 
         i18nService = vI18nService;
+        this.donacionViandaService = donacionViandaService;
+        this.distribucionViandasService = distribucionViandasService;
     }
 
     public PermisoApertura obtenerPermisoApertura(Long permisoAperturaId){
@@ -50,8 +63,8 @@ public class PermisoAperturaService {
         return tarjetaColaboradorRepository.findByPermisosId(permisoAperturaId);
     }
 
-    public PermisoApertura obtenerUnPermisoParaTarjetaYHeladera(Heladera heladera, TarjetaColaborador tarjeta) {
-        return permisoAperturaRepository.findPermisoParaTarjetaAndHeladera(heladera.getId(), tarjeta.getCodigo()).orElseThrow(() -> new EntityNotFoundException(i18nService.getMessage("obtenerEntidad_exception")));
+    public PermisoApertura obtenerPermisoMasRecienteParaTarjetaYHeladera(Heladera heladera, TarjetaColaborador tarjeta) {
+        return permisoAperturaRepository.findPermisoMasRecienteParaTarjetaAndHeladera(heladera.getId(), tarjeta.getCodigo()).orElseThrow(() -> new EntityNotFoundException(i18nService.getMessage("obtenerEntidad_exception")));
     }
 
     public PermisoApertura guardarPermisoApertura(PermisoApertura permisoApertura) {
@@ -59,7 +72,7 @@ public class PermisoAperturaService {
     }
 
     public PermisoApertura crearPermisoApertura(Heladera heladeraPermitida, LocalDateTime fechaOtorgamiento, SolicitudAperturaColaborador.MotivoSolicitud motivo, Integer cantidadViandas) {
-        PermisoApertura permisoApertura = new PermisoApertura(heladeraPermitida, fechaOtorgamiento, motivo, cantidadViandas, true);
+        PermisoApertura permisoApertura = new PermisoApertura(heladeraPermitida, fechaOtorgamiento, motivo, cantidadViandas, true, 0);
         Long permisoAperturaId = guardarPermisoApertura(permisoApertura).getId();   // Guardo el permiso para obtener el id
         programarRevocacionPermiso(permisoAperturaId);
 
@@ -73,15 +86,42 @@ public class PermisoAperturaService {
 
     public void revocarPermisoApertura(Long permisoAperturaId) {
         PermisoApertura permisoApertura = obtenerPermisoApertura(permisoAperturaId);
+
+        // Chequeo que el permiso sea posible de revocar
+        if (permisoApertura.getRevocado() == 2)
+            return;
+
         permisoApertura.revocarPermiso();
         guardarPermisoApertura(permisoApertura);
 
         log.log(Level.INFO, i18nService.getMessage("tarjeta.PermisoApertura.revocarPermisoApertura_info", permisoApertura.getHeladeraPermitida().getNombre(), obtenerTarjetaColaboradorPorPermisoApertura(permisoAperturaId).getTitular().getPersona().getNombre(2)));
 
+        // Puedo hacer esto porque, por como funciona nuestro Sistema, un Colaborador no puede hacer una Contribución de Viandas si ya hay una sin confirmar, por lo que siempre que obtengamos la más reciente será la indicada
+
+        ColaboradorHumano colaborador = obtenerTarjetaColaboradorPorPermisoApertura(permisoAperturaId).getTitular();
+        DonacionVianda donacionMasReciente = donacionViandaService.obtenerDonacionViandaMasRecientePorColaborador(colaborador);
+        DistribucionViandas distribucionMasReciente = distribucionViandasService.obtenerDistribucionViandasMasRecientePorColaborador(colaborador);
+
+        if (donacionMasReciente != null && distribucionMasReciente != null) {
+            if (donacionMasReciente.getFechaContribucion().isAfter(distribucionMasReciente.getFechaContribucion())) {
+                // La Donación de Vianda es más reciente
+                donacionViandaService.caducar(donacionMasReciente.getId());
+            } else {
+                // La Distribución de Viandas es más reciente
+                distribucionViandasService.caducar(distribucionMasReciente.getId());
+            }
+        } else if (donacionMasReciente != null) {
+            // Sólo hay Donación de Vianda reciente
+            donacionViandaService.caducar(donacionMasReciente.getId());
+        } else if (distribucionMasReciente != null) {
+            // Sólo hay Distribución de Viandas reciente
+            distribucionViandasService.caducar(distribucionMasReciente.getId());
+        }
+
         Heladera heladera = permisoApertura.getHeladeraPermitida();
 
         // Rollbackeo la reserva de viandas/espacio cuando ya se perdieron los permisos sobre esa operación (y no va a poder ser realizada)
-        switch(permisoApertura.getMotivo()) {
+        switch (permisoApertura.getMotivo()) {
 
             case INGRESAR_DONACION -> heladeraService.reservarViandas(heladera.getId(), 1);
 
@@ -93,16 +133,17 @@ public class PermisoAperturaService {
         }
     }
 
+    public void impedirRevocamientoPermisoApertura(Long permisoAperturaId) {
+        PermisoApertura permisoApertura = obtenerPermisoApertura(permisoAperturaId);
+
+        permisoApertura.impedirRevocamientoPermiso();
+        guardarPermisoApertura(permisoApertura);
+    }
+
     // Programo la revocación del permiso
-    // No es la mejor forma, pero se dificultaba el uso de un Task Scheduler
     @Async
     public void programarRevocacionPermiso(Long permisoAperturaId) {
-        try {
-            TimeUnit.HOURS.sleep(retrasoRevocacion);
-            revocarPermisoApertura(permisoAperturaId);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.log(Level.SEVERE, i18nService.getMessage("tarjeta.PermisoApertura.revocarPermisoApertura_err"));
-        }
+        scheduledExecutorService.schedule(() -> revocarPermisoApertura(permisoAperturaId),
+                retrasoRevocacion, TimeUnit.HOURS);
     }
 }

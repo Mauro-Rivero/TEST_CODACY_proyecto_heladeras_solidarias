@@ -1,6 +1,7 @@
 package com.tp_anual.proyecto_heladeras_solidarias.service.contribucion;
 
 import com.tp_anual.proyecto_heladeras_solidarias.exception.contribucion.DomicilioFaltanteDiVsException;
+import com.tp_anual.proyecto_heladeras_solidarias.model.contribucion.DonacionVianda;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.Colaborador;
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.ColaboradorHumano;
@@ -40,17 +41,28 @@ public class DistribucionViandasService extends ContribucionService {
         return distribucionViandasRepository.findById(distribucionViandasId).orElseThrow(() -> new EntityNotFoundException(i18nService.getMessage("obtenerEntidad_exception")));
     }
 
+    public DistribucionViandas obtenerDistribucionViandasMasRecientePorColaborador(ColaboradorHumano colaborador) {
+        return distribucionViandasRepository.findTopByColaboradorOrderByFechaContribucionDesc(colaborador);
+    }
+
     public List<DistribucionViandas> obtenerDistribucionesViandasQueSumanPuntos() {
         return new ArrayList<>(distribucionViandasRepository.findByYaSumoPuntosFalse());
     }
 
     public List<DistribucionViandas> obtenerDistribucionesViandasNoConfirmadasParaColaborador(ColaboradorHumano colaborador) {
-        return new ArrayList<>(distribucionViandasRepository.findByColaboradorAndCompletadaFalse(colaborador));
+        return new ArrayList<>(distribucionViandasRepository.findByColaboradorAndCompletadaFalseAndCaducadaFalse(colaborador));
     }
 
     @Override
     public DistribucionViandas guardarContribucion(Contribucion distribucionViandas) {
         return distribucionViandasRepository.saveAndFlush((DistribucionViandas) distribucionViandas);
+    }
+
+    public void caducar(Long distribucionViandasId) {
+        DistribucionViandas distribucionViandas = obtenerContribucion(distribucionViandasId);
+
+        distribucionViandas.caducar();
+        guardarContribucion(distribucionViandas);
     }
 
     @Override

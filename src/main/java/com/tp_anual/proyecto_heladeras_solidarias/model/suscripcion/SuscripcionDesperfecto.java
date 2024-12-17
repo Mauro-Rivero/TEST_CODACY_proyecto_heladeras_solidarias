@@ -21,4 +21,15 @@ public class SuscripcionDesperfecto extends Suscripcion {
     public SuscripcionDesperfecto(ColaboradorHumano vColaborador, Heladera vHeladera, MedioDeContacto vMedioDeContactoElegido) {
         super(vColaborador, vHeladera, vMedioDeContactoElegido);
     }
+
+    @Override
+    public String getCondicion() {
+        return "Desperfecto";
+    }
+
+    @Override
+    public Integer getValorCondicion() {
+        return 0;
+    }
+
 }

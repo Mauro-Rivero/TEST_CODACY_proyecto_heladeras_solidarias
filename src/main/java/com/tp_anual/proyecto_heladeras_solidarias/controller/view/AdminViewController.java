@@ -7,11 +7,22 @@ import java.util.List;
 
 import com.tp_anual.proyecto_heladeras_solidarias.exception.contribucion.*;
 import com.tp_anual.proyecto_heladeras_solidarias.exception.migrador.FilaDeDatosIncompletaException;
+import com.tp_anual.proyecto_heladeras_solidarias.model.area.Area;
+import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.ColaboradorHumano;
 import com.tp_anual.proyecto_heladeras_solidarias.model.incidente.FallaTecnica;
+import com.tp_anual.proyecto_heladeras_solidarias.model.persona.PersonaFisica;
+import com.tp_anual.proyecto_heladeras_solidarias.model.tecnico.Tecnico;
+import com.tp_anual.proyecto_heladeras_solidarias.model.tecnico.Visita;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.incidente.FallaTecnicaService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.tecnico.TecnicoService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.tecnico.VisitaService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,14 +45,18 @@ public class AdminViewController {
     private final AlertaService alertaService;
     private final FallaTecnicaService fallaTecnicaService;
     private final ReporteService reporteService;
+    private final TecnicoService tecnicoService;
+    private final VisitaService visitaService;
 
     private final I18nService i18nService;
 
-    public AdminViewController(Migrador vMigrador, AlertaService vAlertaService, FallaTecnicaService vFallaTecnicaService, ReporteService vReporteService, I18nService vi18nService) {
+    public AdminViewController(Migrador vMigrador, AlertaService vAlertaService, FallaTecnicaService vFallaTecnicaService, ReporteService vReporteService, TecnicoService vTecnicoService, VisitaService vVisitaService, I18nService vi18nService) {
         migrador = vMigrador;
         alertaService = vAlertaService;
         fallaTecnicaService = vFallaTecnicaService;
         reporteService = vReporteService;
+        tecnicoService = vTecnicoService;
+        visitaService = vVisitaService;
 
         i18nService = vi18nService;
     }
@@ -61,6 +76,9 @@ public class AdminViewController {
         model.addAttribute("reporteFallasPorHeladera", fallasPorHeladera);
         model.addAttribute("reporteMovimientosViandaPorHeladera", movimientosViandaPorHeladera);
         model.addAttribute("reporteViandasPorColaborador", viandasPorColaborador);
+
+        List<Tecnico> tecnicos = tecnicoService.obtenerTecnicos();
+        model.addAttribute("tecnicos", tecnicos);
 
         model.addAttribute("messageNoAlerts", i18nService.getMessage("controller.AdminController.mostrarAdmin_no_alertas"));
         model.addAttribute("messageNoFailures", i18nService.getMessage("controller.AdminController.mostrarAdmin_no_fallas_tecnicas"));
@@ -88,4 +106,44 @@ public class AdminViewController {
 
         return "redirect:/admin";
     }
+
+    @PostMapping("/modificar-tecnico/guardar")
+    public String modificarTecncio(
+            @RequestParam("tecnico-id") Long tecnicoId,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("apellido") String apellido,
+            @RequestParam("x1") Double x1,
+            @RequestParam("x2") Double x2,
+            @RequestParam("y1") Double y1,
+            @RequestParam("y2") Double y2
+    ){
+        Tecnico tecnico = tecnicoService.obtenerTecnico(tecnicoId);
+        Area area = new Area(x1, y1, x2, y2);
+
+        PersonaFisica persona = tecnico.getPersona();
+        persona.setNombre(nombre);
+        persona.setApellido(apellido);
+
+        tecnico.setAreaDeCobertura(area);
+
+        tecnicoService.guardarTecnico(tecnico);
+
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/tecnico/borrar/{id}")
+    public String borrarTecnico(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        Tecnico tecnico = tecnicoService.obtenerTecnicoPorUsername(username);
+
+        List<Visita> visitas = visitaService.obtenerVisitasPorTecnico(tecnico);
+        visitaService.eliminarVisitas(visitas);
+
+        tecnicoService.eliminarTecnico(id);
+
+        return "redirect:/admin";
+    }
+
 }

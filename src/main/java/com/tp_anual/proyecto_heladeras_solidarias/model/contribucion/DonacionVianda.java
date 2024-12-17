@@ -9,6 +9,7 @@ import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.vianda.Vianda;
 import com.tp_anual.proyecto_heladeras_solidarias.utils.SpringContext;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.java.Log;
 import org.springframework.context.MessageSource;
 
@@ -46,4 +47,6 @@ public class DonacionVianda extends Contribucion {
         System.out.println(logMessage1);
         System.out.println(logMessage2);
     }
+
+    public void caducar() {setCaducada(true);}
 }

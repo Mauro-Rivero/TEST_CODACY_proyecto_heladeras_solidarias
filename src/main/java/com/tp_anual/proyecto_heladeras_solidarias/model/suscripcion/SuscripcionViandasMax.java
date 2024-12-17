@@ -28,4 +28,14 @@ public class SuscripcionViandasMax extends Suscripcion {
         super(vColaborador, vHeladera, vMedioDeContactoElegido);
         viandasParaLlenarMax = vViandasParaLlenarMax;
     }
+
+    @Override
+    public String getCondicion() {
+        return "Heladera llenándose: (" + viandasParaLlenarMax + ")";
+    }
+
+    @Override
+    public Integer getValorCondicion() {
+        return viandasParaLlenarMax;
+    }
 }
