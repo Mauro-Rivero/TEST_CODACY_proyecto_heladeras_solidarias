@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
+
     <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -73,7 +73,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Formulario dentro del modal -->
+
                     <form  th:action="@{/modificar-suscripcion/guardar}" method="POST">
                         <input type="hidden" id="suscripcion-id" name="suscripcion-id" value="">
                         <div class="info-section">
@@ -96,14 +96,14 @@
 <script>
     document.querySelectorAll('.btn-outline-secondary').forEach(button => {
         button.addEventListener('click', function () {
-            const input = this.previousElementSibling; // El input asociado al botón
+            const input = this.previousElementSibling;
             if (input.hasAttribute('readonly')) {
-                input.removeAttribute('readonly'); // Hacer editable
-                input.focus(); // Poner el foco en el input
-                this.innerHTML = '<i class="fas fa-check"></i>'; // Cambiar ícono al de "guardar"
+                input.removeAttribute('readonly');
+                input.focus();
+                this.innerHTML = '<i class="fas fa-check"></i>';
             } else {
-                input.setAttribute('readonly', true); // Volver a solo lectura
-                this.innerHTML = '<i class="fas fa-pencil-alt"></i>'; // Volver al ícono de lápiz
+                input.setAttribute('readonly', true);
+                this.innerHTML = '<i class="fas fa-pencil-alt"></i>';
             }
         });
     });

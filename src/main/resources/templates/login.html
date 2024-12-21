@@ -23,7 +23,6 @@
         <h1 class="fw-bold">INICIAR SESION</h1>
         <hr>
         <form th:action="@{/login}" method="POST" class="register-form needs-validation mb-3">
-            <!-- Usuario -->
             <div class="mb-3">
                 <label for="username" class="form-label">Usuario</label>
                 <div class="input-group">
@@ -31,7 +30,6 @@
                     <input type="text" class="form-control" id="username" name="username" placeholder="Ej: juanperez" required autofocus>
                 </div>
             </div>
-            <!-- Contraseña -->
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
                 <div class="input-group">
@@ -41,19 +39,15 @@
                     </button>
                 </div>
             </div>
-            <!-- Mensaje de error -->
             <div th:if="${loginError}">
-                <p th:text="${loginError}" class="error"></p>
+                <p class="error">Usuario o contraseña incorrectos.</p>
             </div>
-            <!-- Botón Iniciar sesión -->
             <button type="submit" class="btn btn-dark w-100 mb-2">Iniciar Sesión</button>
         </form>
-        <!-- Botón Google -->
         <a href="/oauth2/authorization/google" class="btn btn-light w-100 mb-3 d-flex align-items-center justify-content-center gap-3">
             <i class="fa-brands fa-google" style="color: #74C0FC;"></i>
             Iniciar sesión con Google
         </a>
-        <!-- Enlace de registro -->
         <a class="w-100 text-center" th:href="@{/seleccion-persona}">¿No tenés cuenta? Registrate</a>
     </div>
 </main>

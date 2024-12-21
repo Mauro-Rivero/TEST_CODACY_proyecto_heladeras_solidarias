@@ -8,6 +8,8 @@ import com.tp_anual.proyecto_heladeras_solidarias.exception.tarjeta.DatosInvalid
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.Colaborador;
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.ColaboradorHumano;
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.ColaboradorJuridico;
+import com.tp_anual.proyecto_heladeras_solidarias.model.contacto.EMail;
+import com.tp_anual.proyecto_heladeras_solidarias.model.contacto.MedioDeContacto;
 import com.tp_anual.proyecto_heladeras_solidarias.model.contribucion.*;
 import com.tp_anual.proyecto_heladeras_solidarias.model.documento.Documento;
 import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.Heladera;
@@ -22,10 +24,13 @@ import com.tp_anual.proyecto_heladeras_solidarias.model.tarjeta.TarjetaColaborad
 import com.tp_anual.proyecto_heladeras_solidarias.model.tarjeta.TarjetaPersonaEnSituacionVulnerable;
 import com.tp_anual.proyecto_heladeras_solidarias.model.ubicacion.Ubicacion;
 import com.tp_anual.proyecto_heladeras_solidarias.service.colaborador.ColaboradorService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.contacto.MedioDeContactoService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.contacto.MedioDeContactoServiceSelector;
 import com.tp_anual.proyecto_heladeras_solidarias.service.contribucion.*;
 import com.tp_anual.proyecto_heladeras_solidarias.service.heladera.HeladeraService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.heladera.PosesionViandasService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.heladera.ViandaService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.persona_en_situacion_vulnerable.PersonaEnSituacionVulnerableService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.tarjeta.TarjetaColaboradorService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.tarjeta.TarjetaPersonaEnSituacionVulnerableService;
@@ -60,8 +65,11 @@ public class ContribucionViewController {
     private final ContribucionFinder contribucionFinder;
     private final DistribucionViandasService distribucionViandasService;
     private final PosesionViandasService posesionViandasService;
+    private final MedioDeContactoServiceSelector medioDeContactoServiceSelector;
 
-    public ContribucionViewController(HeladeraService vHeladeraService, TarjetaColaboradorService vTarjetaColaboradorService, PersonaEnSituacionVulnerableService vPersonaEnSituacionVulnerableService, ViandaService vViandaService, TarjetaPersonaEnSituacionVulnerableService vTarjetaPersonaEnSituacionVulnerableService, ColaboradorService vColaboradorService, CargaOfertaCreator vCargaOfertaCreator, DistribucionViandasCreator vDistribucionViandasCreator, DonacionDineroCreator vDonacionDineroCreator, DonacionViandaCreator vDonacionViandaCreator, HacerseCargoDeHeladeraCreator vHacerseCargoDeHeladeraCreator, RegistroDePersonaEnSituacionVulnerableCreator vRegistroDePersonaEnSituacionVulnerableCreator, ContribucionFinder vContribucionFinder, DistribucionViandasService vDistribucionViandasService, PosesionViandasService vPosesionViandasService) {
+    private final I18nService i18nService;
+
+    public ContribucionViewController(HeladeraService vHeladeraService, TarjetaColaboradorService vTarjetaColaboradorService, PersonaEnSituacionVulnerableService vPersonaEnSituacionVulnerableService, ViandaService vViandaService, TarjetaPersonaEnSituacionVulnerableService vTarjetaPersonaEnSituacionVulnerableService, ColaboradorService vColaboradorService, CargaOfertaCreator vCargaOfertaCreator, DistribucionViandasCreator vDistribucionViandasCreator, DonacionDineroCreator vDonacionDineroCreator, DonacionViandaCreator vDonacionViandaCreator, HacerseCargoDeHeladeraCreator vHacerseCargoDeHeladeraCreator, RegistroDePersonaEnSituacionVulnerableCreator vRegistroDePersonaEnSituacionVulnerableCreator, ContribucionFinder vContribucionFinder, DistribucionViandasService vDistribucionViandasService, PosesionViandasService vPosesionViandasService, MedioDeContactoServiceSelector vMedioDeContactoServiceSelector, I18nService vI18nService) {
         heladeraService = vHeladeraService;
         tarjetaColaboradorService = vTarjetaColaboradorService;
         personaEnSituacionVulnerableService = vPersonaEnSituacionVulnerableService;
@@ -77,6 +85,8 @@ public class ContribucionViewController {
         contribucionFinder = vContribucionFinder;
         distribucionViandasService = vDistribucionViandasService;
         posesionViandasService = vPosesionViandasService;
+        medioDeContactoServiceSelector = vMedioDeContactoServiceSelector;
+        i18nService = vI18nService;
     }
 
     @GetMapping("/colaborar-personas-fisicas")
@@ -149,9 +159,18 @@ public class ContribucionViewController {
         Heladera heladeraOrigen = heladeraService.obtenerHeladera(heladeraOrigenId);
         Heladera heladeraDestino = heladeraService.obtenerHeladera(heladeraDestinoId);
 
+        if (!heladeraDestino.getEstado()) {
+            redirectAttributes.addFlashAttribute("error", 4);
+            return "redirect:/distribuir-viandas";
+        }
+
         if (tarjeta.getClass() == TarjetaColaboradorNula.class) {
             tarjeta = tarjetaColaboradorService.crearTarjeta(colaboradorId);
             colaboradorService.agregarTarjeta(colaboradorId, tarjeta);
+
+            MedioDeContacto medioDeContacto = colaborador.getMedioDeContacto(EMail.class);
+            MedioDeContactoService medioDeContactoService = medioDeContactoServiceSelector.obtenerMedioDeContactoService(medioDeContacto.getClass());
+            medioDeContactoService.contactar(medioDeContacto.getId(),  i18nService.getMessage("controller.ContribucionController.guardarDonacionVianda_title"), i18nService.getMessage("controller.ContribucionController.guardarDonacionVianda_body"));
         }
 
         // Verifico que la Heladera origen no esté vacía (o pueda vaciarse por reservas) y genero la Solicitud de Apertura y el Permiso de Apertura correspondientes
@@ -241,9 +260,18 @@ public class ContribucionViewController {
 
         Heladera heladera = heladeraService.obtenerHeladera(heladeraId);
 
+        if (!heladera.getEstado()) {
+            redirectAttributes.addFlashAttribute("error", 4);
+            return "redirect:/donar-vianda";
+        }
+
         if (tarjeta.getClass() == TarjetaColaboradorNula.class) {
             tarjeta = tarjetaColaboradorService.crearTarjeta(colaboradorId);
             colaboradorService.agregarTarjeta(colaboradorId, tarjeta);
+
+            MedioDeContacto medioDeContacto = colaborador.getMedioDeContacto(EMail.class);
+            MedioDeContactoService medioDeContactoService = medioDeContactoServiceSelector.obtenerMedioDeContactoService(medioDeContacto.getClass());
+            medioDeContactoService.contactar(medioDeContacto.getId(),  i18nService.getMessage("controller.ContribucionController.guardarDonacionVianda_title"), i18nService.getMessage("controller.ContribucionController.guardarDonacionVianda_body"));
         }
 
         // Verifico que la Heladera origen no esté llena (o pueda vaciarse por reservas) y genero la Solicitud de Apertura y el Permiso de Apertura correspondientes

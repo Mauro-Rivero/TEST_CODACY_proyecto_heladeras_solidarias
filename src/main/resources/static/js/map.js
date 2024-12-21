@@ -84,7 +84,7 @@ function encontrarHeladeraMasCercana(userPosition, heladeras, spherical) {
 
 async function obtenerHeladeras() {
     try {
-        const response = await fetch('http://localhost:8080/api/heladeras');
+        const response = await fetch('https://proyecto-heladeras-solidarias.onrender.com/api/heladeras');
         const heladeras = await response.json();
 
         const { Marker } = await google.maps.importLibrary("marker");

@@ -55,7 +55,6 @@
         <strong CLASS="text-muted" th:text="${colaborador.getNombre(2)}"></strong>
     </div>
 
-    <!-- Información del perfil -->
     <form th:action="@{/perfil-persona-juridica/guardar}" method="POST">
         <div class="info-section">
             <label for="razon-social">Razón social</label>
@@ -123,8 +122,6 @@
             </div>
         </div>
 
-
-        <!-- Botón de guardar cambios -->
         <button type="submit" class="btn btn-primary ">Guardar Cambios</button>
     </form>
 </div>
@@ -158,7 +155,6 @@
         }
     });
 
-    // Hacer editables los campos dentro del contenedor de dirección al abrir
     direccionFields.addEventListener('click', function (e) {
         if (e.target.tagName === 'INPUT' && e.target.hasAttribute('readonly')) {
             e.target.removeAttribute('readonly');

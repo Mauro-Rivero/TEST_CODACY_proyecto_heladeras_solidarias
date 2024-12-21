@@ -56,6 +56,8 @@ public class TecnicoViewController {
 
         Tecnico tecnico = tecnicoService.obtenerTecnicoPorUsername(username);
 
+        model.addAttribute("tecnicoActual", tecnico);
+
         List<Alerta> alertas = new ArrayList<>();
         alertas.addAll(alertaService.obtenerAlertasParaTecnico(tecnico));
         alertas.addAll(alertaService.obtenerAlertasSinTecnicoNoResueltas());

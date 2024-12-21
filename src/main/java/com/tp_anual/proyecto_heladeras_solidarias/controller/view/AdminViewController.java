@@ -109,14 +109,14 @@ public class AdminViewController {
 
     @PostMapping("/modificar-tecnico/guardar")
     public String modificarTecncio(
-            @RequestParam("tecnico-id") Long tecnicoId,
-            @RequestParam("nombre") String nombre,
-            @RequestParam("apellido") String apellido,
-            @RequestParam("x1") Double x1,
-            @RequestParam("x2") Double x2,
-            @RequestParam("y1") Double y1,
-            @RequestParam("y2") Double y2
-    ){
+        @RequestParam("tecnico-id") Long tecnicoId,
+        @RequestParam("nombre") String nombre,
+        @RequestParam("apellido") String apellido,
+        @RequestParam("x1") Double x1,
+        @RequestParam("x2") Double x2,
+        @RequestParam("y1") Double y1,
+        @RequestParam("y2") Double y2)
+    {
         Tecnico tecnico = tecnicoService.obtenerTecnico(tecnicoId);
         Area area = new Area(x1, y1, x2, y2);
 

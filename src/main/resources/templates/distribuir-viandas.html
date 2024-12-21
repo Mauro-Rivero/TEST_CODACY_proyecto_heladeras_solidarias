@@ -113,6 +113,12 @@
                 text: 'No se puede realizar una distribución de viandas si la heladera destino está llena',
                 icon: 'error'
             });
+        } else if (error === 4) {
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pueden llevar viandas a una heladera inactiva',
+                icon: 'error'
+            });
         } else if (error === 5) {
             Swal.fire({
                 title: '¡Donación realizada!',

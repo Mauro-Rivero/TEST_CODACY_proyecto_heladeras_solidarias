@@ -93,11 +93,9 @@
             const minContainer = document.getElementById("min-container");
             const maxContainer = document.getElementById("max-container");
 
-            // Reinicia los contenedores
             minContainer.classList.add("d-none");
             maxContainer.classList.add("d-none");
 
-            // Muestra el campo según el motivo seleccionado
             if (motivo === "VIANDAS_MIN") {
                 minContainer.classList.remove("d-none");
             } else if (motivo === "VIANDAS_MAX") {
@@ -105,22 +103,18 @@
             }
         });
         function actualizarMaximo() {
-            // Obtener el select y el input
             const selectHeladera = document.getElementById("heladera");
             const inputCantidadMin = document.getElementById("limite-inferior");
             const inputCantidadMax = document.getElementById("limite-superior");
 
-            // Obtener la opción seleccionada
             const opcionSeleccionada = selectHeladera.options[selectHeladera.selectedIndex];
 
-            // Leer el atributo data-min de la opción seleccionada
             const maximo = opcionSeleccionada.getAttribute("data-max");
 
-            // Actualizar el atributo min del input
             if (maximo) {
                 inputCantidadMin.setAttribute("max", maximo);
                 inputCantidadMin.value = ""; // Limpiar el valor si el mínimo cambia
-                inputCantidadMin.placeholder = `Ingrese hasta ${maximo} unidades`;
+                inputCantidadMin.placeholder = `Ingrese hasta ${maximo - 1} unidades`;
                 inputCantidadMax.setAttribute("max", maximo);
                 inputCantidadMax.value = ""; // Limpiar el valor si el mínimo cambia
                 inputCantidadMax.placeholder = `Ingrese hasta ${maximo} unidades`;

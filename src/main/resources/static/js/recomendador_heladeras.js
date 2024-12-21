@@ -29,7 +29,7 @@ async function recomendarPuntosHeladeras(){
     }catch(error){}
 }
 async function obtenerHeladeras() {
-    const url = 'http://localhost:8080/api/heladeras';
+    const url = 'https://proyecto-heladeras-solidarias.onrender.com/api/heladeras';
     try {
         const response = await fetch(url);
         const heladeras = await response.json();

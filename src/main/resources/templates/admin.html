@@ -13,61 +13,76 @@
     <link rel="stylesheet" th:href="@{/css/components.css}">
 </head>
 
-<body class="vectores-fondo">
+<body>
 
         <div th:replace="~{fragments/panel-header :: panel-header}"></div>
 
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 admin-sidebar">
-                <div>
-                    <h4 class="text-dark mb-0">Panel de Administración</h4>
-                </div>
-                <hr>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="sidebar-link" href="#cargar-archivo">
-                            <span class="material-symbols-outlined">upload_file</span>
-                            Cargar Archivo
+            <nav class="col-md-2 col-lg-1 d-flex bg-white text-dark flex-column vh-100 p-3">
+                <ul class="nav flex-column text-dark">
+                    <li class="nav-item mb-3">
+                        <a class="seccion sidebar-link" href="#cargar-archivo">
+                            <span class="material-symbols-outlined fs-4">upload_file</span>
+                            <div>Migrar Archivo</div>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="sidebar-link" href="#ver-alertas">
-                            <span class="material-symbols-outlined">warning</span>
-                            Ver Alertas
+                    <li class="nav-item mb-3">
+                        <a class="seccion sidebar-link" href="#ver-alertas">
+                            <span class="material-symbols-outlined fs-4">warning</span>
+                            <div>Alertas</div>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="sidebar-link" href="#ver-fallas">
-                            <span class="material-symbols-outlined">warning</span>
-                            Ver Fallas Técnicas
+                    <li class="nav-item mb-3">
+                        <a class="seccion sidebar-link" href="#ver-fallas">
+                            <span class="material-symbols-outlined fs-4">error</span>
+                            <div>Fallas Técnicas</div>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="sidebar-link" href="#ver-reportes">
-                            <span class="material-symbols-outlined">assessment</span>
-                            Ver Reportes
+                    <li class="nav-item mb-3">
+                        <a class="seccion sidebar-link" href="#ver-reportes">
+                            <span class="material-symbols-outlined fs-4">assessment</span>
+                            <div>Reportes</div>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="sidebar-link" th:href="@{/registro-tecnico}">
-                            <span class="material-symbols-outlined">manage_accounts</span>
-                            Registrar a un técnico
+                    <li class="nav-item mb-3">
+                        <a class="seccion sidebar-link" href="#abm-tecnico">
+                            <span class="material-symbols-outlined fs-4">manage_accounts</span>
+                            <div>Técnicos</div>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-3">
+                        <a class="sidebar-link" th:href="@{/logout}">
+                            <span class="material-symbols-outlined fs-4">logout</span>
+                            <div>Cerrar Sesión</div>
                         </a>
                     </li>
                 </ul>
             </nav>
 
-            <main class="col-md-9 col-lg-10 admin-content">
+            <main class="col-md-10 col-lg-11 admin-content">
                 <div th:if="${messageAlert}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <span th:text="${messageAlert}"></span>
+                    <span>Error durante la migración desde archivo.</span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <div th:if="${messageSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <span th:text="${messageSuccess}"></span>
+                    <span>Migración ejecutada correctamente.</span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                <section id="default">
+                    <div class="container col-xxl-8 px-4">
+                        <div class="row flex-lg-row-reverse align-items-center g-5 px-4">
+                            <div class="col-10 col-sm-8 col-lg-6">
+                                <img src="/assets/admin-person.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+                            </div>
+                            <div class="col-lg-6">
+                                <h1 class="display-5 fw-bold lh-1 mb-3">Bienvenid@, admin</h1>
+                                <p class="lead">Con el panel que ves a la izquierda vas a poder acceder a las diversas funcionalidades que ofrece el sistema.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <section id="cargar-archivo">
                     <h2 class="mb-4">Migrar Archivo</h2>
                     <div class="card p-4">
@@ -81,19 +96,22 @@
                     </div>
                 </section>
 
-                <section id="ver-alertas" class="mt-5">
+                <section id="ver-alertas">
                     <h2 class="mb-4">Alertas</h2>
-                    <div class="card p-4">
+                    <div th:if="${alertas.isEmpty()}" class="text-center text-muted card p-4 w-100">
+                        <div class="d-flex align-items-center justify-content-center w-75">
+                            <img class="col-6" src="/assets/no-alertas.png" alt="no hay alertas" style="width: 400px">
+                            <p class="col-6">No hay alertas para ver.</p>
+                        </div>
+                    </div>
+                    <div th:if="not ${alertas.isEmpty()}" class="card p-4">
                         <div class="container mt-0">
                             <div class="row">
                                 <div class="w-100">
-                                    <div class="my-4 w-100 d-flex flex-column align-items-center gap-4 alertas-container">
-                                        <div th:if="${alertas.isEmpty()}" class="text-center text-muted">
-                                            <p th:text="${messageNoAlerts}"></p>
-                                        </div>
-                                        <div th:each="alerta : ${alertas}" class="alerta d-flex w-100 p-3 border rounded shadow-sm mb-2">
+                                    <div class="my-4 w-100 d-flex flex-column align-items-start gap-4 alertas-container">
+                                        <div th:each="alerta : ${alertas}" class="alerta d-flex w-90 p-3 border rounded shadow-sm mb-2">
                                             <span class="material-symbols-outlined text-warning me-3">warning</span>
-                                            <div class="text-start w-100">
+                                            <div class="text-start w-75">
                                                 <p><span class="fw-bold">Heladera:</span> <span th:text="${alerta.heladera.nombre}"></span></p>
                                                 <p><span class="fw-bold">Tipo:</span> <span th:text="${alerta.getTipoAlertaString()}"></span></p>
                                                 <p><span class="fw-bold">Fecha:</span> <span th:text="${alerta.getFechaFormateada()}"></span></p>
@@ -112,21 +130,23 @@
                     </div>
                 </section>
 
-                <section id="ver-fallas" class="mt-5">
+                <section id="ver-fallas">
                     <h2 class="mb-4">Fallas Técnicas</h2>
-                    <div class="card p-4">
+                    <div th:if="${fallasTecnicas.isEmpty()}" class="text-center text-muted card w-100 p-4">
+                        <div class="d-flex align-items-center justify-content-center w-75">
+                            <img class="col-6" src="/assets/no-alertas.png" alt="no hay alertas" style="width: 400px">
+                            <p class="col-6">No hay fallas técnicas para ver.</p>
+                        </div>
+                    </div>
+                    <div th:if="not ${fallasTecnicas.isEmpty()}" class="card p-4">
                         <div class="container mt-0">
                             <div class="row">
                                 <div class="w-100">
-                                    <div class="my-4 w-100 d-flex flex-column align-items-center gap-4 alertas-container">
-                                        <div th:if="${fallasTecnicas.isEmpty()}" class="text-center text-muted">
-                                            <p th:text="${messageNoFailures}"></p>
-                                        </div>
-                                        <div th:each="falla : ${fallasTecnicas}" class="alerta d-flex w-100 p-3 border rounded shadow-sm mb-2">
-                                            <span class="material-symbols-outlined text-danger me-3">warning</span>
+                                    <div class="my-4 w-100 d-flex flex-column align-items-start gap-4 alertas-container">
+                                        <div th:each="falla : ${fallasTecnicas}" class="alerta d-flex w-90 p-3 border rounded shadow-sm mb-2">
+                                            <span class="material-symbols-outlined text-danger me-3 px-3">warning</span>
                                             <div class="text-start w-100">
                                                 <p><span class="fw-bold">Heladera:</span> <span th:text="${falla.heladera.nombre}"></span></p>
-<!--                                                <img style="width: 100px" th:src="${falla.foto}" th:alt="'Foto de la falla en' + ${falla.heladera.nombre}">-->
                                                 <p><span class="fw-bold">Fecha:</span> <span th:text="${falla.getFechaFormateada()}"></span></p>
                                                 <p><span class="fw-bold">Descripción:</span> <span th:text="${falla.descripcion}"></span></p>
                                                 <div th:if="${falla.tieneTecnico()}">
@@ -144,14 +164,14 @@
                     </div>
                 </section>
 
-                <section id="ver-reportes" class="mt-5">
+                <section id="ver-reportes">
                     <h2 class="mb-4">Ver Reportes</h2>
-                    <div class="card p-4">
+                    <div class="card px-4 py-2">
                         <div class="container mt-0">
                             <div class="row">
                                 <div class="w-100">
-                                    <div class="my-4 reportes">
-                                        <div class="report-card">
+                                    <div class="reportes">
+                                        <div class="report-card mb-4">
                                             <div class="report-header">
                                                 <h3>Cantidad de fallas por heladera</h3>
                                                 <table class="table table-bordered">
@@ -169,9 +189,9 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <p>Visualiza y gestiona las fallas registradas en cada heladera. Analiza las heladeras con más fallas.</p>
                                         </div>
-                                        <div class="report-card">
+                                        <hr class="divider my-4">
+                                        <div class="report-card mb-4">
                                             <div class="report-header">
                                                 <h3>Cantidad de viandas retiradas/colocadas</h3>
                                                 <table class="table table-bordered">
@@ -191,8 +211,8 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <p>Monitorea la cantidad de viandas retiradas o colocadas en las heladeras a lo largo del tiempo.</p>
                                         </div>
+                                        <hr class="divider my-4">
                                         <div class="report-card">
                                             <div class="report-header">
                                                 <h3>Cantidad de viandas por colaborador</h3>
@@ -211,7 +231,6 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <p>Analiza cuántas viandas ha contribuido cada colaborador al sistema.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -220,8 +239,11 @@
                     </div>
                 </section>
 
-                <section id="abm-tecnico" class="mt-5">
-                    <h2 class="mb-4">Técnicos</h2>
+                <section id="abm-tecnico">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-4">Técnicos</h2>
+                        <button class="btn btn-primary" style="height: 50px"><a th:href="@{/registro-tecnico}">Registrar un técnico</a></button>
+                    </div>
                     <div class="card p-4">
                         <div class="table-responsive text-center">
                             <table class="table table-bordered">
@@ -373,6 +395,41 @@
 
             }
         </script>
+        <script>
+
+            const sidebarLinks = document.querySelectorAll('.seccion');
+
+            const sections = document.querySelectorAll('main section');
+
+
+            function hideAllSections() {
+                sections.forEach(section => {
+                    section.style.display = 'none';
+                });
+            }
+
+
+            function showSection(sectionId) {
+                hideAllSections(); // Oculta todas las secciones
+                const sectionToShow = document.getElementById(sectionId);
+                if (sectionToShow) {
+                    sectionToShow.style.display = 'block';
+                }
+            }
+
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const sectionId = link.getAttribute('href').substring(1);
+                    showSection(sectionId);
+                });
+            });
+
+
+            showSection('default');
+        </script>
+
 
 </body>
 </html>

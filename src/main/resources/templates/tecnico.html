@@ -17,38 +17,63 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 admin-sidebar">
-            <div>
-                <h4 class="text-dark mb-0">Panel Técnico</h4>
-            </div>
-            <hr>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="sidebar-link" href="#ver-alertas">
-                        <span class="material-symbols-outlined">warning</span>
-                        Ver Incidentes
+        <nav class="col-md-2 col-lg-1 d-flex bg-white text-dark flex-column vh-100 p-3">
+            <ul class="nav flex-column text-dark">
+                <li class="nav-item mb-3">
+                    <a class="seccion sidebar-link" href="#ver-alertas">
+                        <span class="material-symbols-outlined fs-4">warning</span>
+                        <div>Alertas</div>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="sidebar-link" href="#cargar-visitas">
-                        <span class="material-symbols-outlined">add_task</span>
-                        Registrar Visitas
+                <li class="nav-item mb-3">
+                    <a class="seccion sidebar-link" href="#ver-fallas-tecnicas">
+                        <span class="material-symbols-outlined fs-4">error</span>
+                        <div>Fallas técnicas</div>
+                    </a>
+                </li>
+                <li class="nav-item mb-3">
+                    <a class="seccion sidebar-link" href="#cargar-visitas">
+                        <span class="material-symbols-outlined fs-4">add_task</span>
+                        <div>Registrar visitas</div>
+                    </a>
+                </li>
+                <li class="nav-item mb-3">
+                    <a class="sidebar-link" th:href="@{/logout}">
+                        <span class="material-symbols-outlined fs-4">logout</span>
+                        <div>Cerrar Sesión</div>
                     </a>
                 </li>
             </ul>
         </nav>
 
-        <main class="col-md-9 col-lg-10 admin-content">
-            <section id="ver-alertas" class="mt-5">
+
+        <main class="col-md-10 col-lg-11 admin-content">
+            <section id="default">
+                <div class="container col-xxl-8 px-4">
+                    <div class="row flex-lg-row-reverse align-items-center g-5 px-4">
+                        <div class="col-10 col-sm-8 col-lg-6">
+                            <img src="/assets/tecnicos.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+                        </div>
+                        <div class="col-lg-6">
+                            <h1 class="display-5 fw-bold lh-1 mb-3">Bienvenid@, <span th:text="${tecnicoActual.getPersona.getNombre(0)}"></span></h1>
+                            <p class="lead">Con el panel que ves a la izquierda vas a poder acceder a las diversas funcionalidades que ofrece el sistema.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="ver-alertas">
                 <h2 class="mb-4">Alertas</h2>
-                <div class="card p-4">
+                <div th:if="${alertas.isEmpty()}" class="text-center text-muted card w-100 p-4">
+                    <div class="d-flex align-items-center justify-content-center w-75">
+                        <img class="col-6" src="/assets/no-alertas.png" alt="no hay alertas" style="width: 400px">
+                        <p class="col-6">No hay alertas para ver.</p>
+                    </div>
+                </div>
+                <div th:if="${not alertas.isEmpty()}" class="card p-4">
                     <div class="container mt-0">
                         <div class="row">
                             <div class="w-100">
                                 <div class="my-4 w-100 d-flex flex-column align-items-center gap-4 alertas-container">
-                                    <div th:if="${alertas.isEmpty()}">
-                                        <p th:text="${messageNoAlerts}"></p>
-                                    </div>
                                     <div th:each="alerta : ${alertas}" class="alerta">
                                         <span class="material-symbols-outlined">warning</span>
                                         <div class="text-start w-100 ms-4">
@@ -70,16 +95,19 @@
                     </div>
                 </div>
             </section>
-            <section id="ver-fallas-tecnicas" class="mt-5">
+            <section id="ver-fallas-tecnicas">
                 <h2 class="mb-4">Fallas Técnicas</h2>
-                <div class="card p-4">
+                <div th:if="${fallasTecnicas.isEmpty()}" class="text-center text-muted card w-100 p-4">
+                    <div class="d-flex align-items-center justify-content-center w-75">
+                        <img class="col-6" src="/assets/no-alertas.png" alt="no hay alertas" style="width: 400px">
+                        <p class="col-6">No hay fallas técnicas para ver.</p>
+                    </div>
+                </div>
+                <div th:if="${not fallasTecnicas.isEmpty()}" class="card p-4">
                     <div class="container mt-0">
                         <div class="row">
                             <div class="w-100">
                                 <div class="my-4 w-100 d-flex flex-column align-items-center gap-4 alertas-container">
-                                    <div th:if="${fallasTecnicas.isEmpty()}" >
-                                        <p th:text="${messageNoFailures}"></p>
-                                    </div>
                                     <div th:each="falla : ${fallasTecnicas}" class="alerta">
                                         <span class="material-symbols-outlined">warning</span>
                                         <div class="text-start w-100 ms-4">
@@ -101,7 +129,7 @@
                 </div>
             </section>
 
-            <section id="cargar-visitas" class="mt-5">
+            <section id="cargar-visitas">
                 <h2 class="mb-4">Registrar Visitas</h2>
                 <div class="card p-4 mb-5">
                     <form th:action="@{/registrar-visita/guardar}" method="POST">
@@ -138,5 +166,33 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const sidebarLinks = document.querySelectorAll('.seccion');
+    const sections = document.querySelectorAll('main section');
+
+    function hideAllSections() {
+        sections.forEach(section => {
+            section.style.display = 'none';
+        });
+    }
+
+    function showSection(sectionId) {
+        hideAllSections();
+        const sectionToShow = document.getElementById(sectionId);
+        if (sectionToShow) {
+            sectionToShow.style.display = 'block';
+        }
+    }
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const sectionId = link.getAttribute('href').substring(1);
+            showSection(sectionId);
+        });
+    });
+
+    showSection('default');
+</script>
 </body>
 </html>

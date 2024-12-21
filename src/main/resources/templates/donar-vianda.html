@@ -91,6 +91,12 @@
                 text: 'No se puede realizar una donación de vianda si la heladera está llena',
                 icon: 'error'
             });
+        } else if (error === 4) {
+            Swal.fire({
+                title: 'Error',
+                text: 'No se puede realizar una donación de vianda a una heladera inactiva',
+                icon: 'error'
+            });
         } else if (error === 5) {
             Swal.fire({
                 title: '¡Donación realizada!',

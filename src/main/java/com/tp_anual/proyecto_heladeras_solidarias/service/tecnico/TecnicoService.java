@@ -1,6 +1,9 @@
 package com.tp_anual.proyecto_heladeras_solidarias.service.tecnico;
 
 import com.tp_anual.proyecto_heladeras_solidarias.model.colaborador.Colaborador;
+import com.tp_anual.proyecto_heladeras_solidarias.model.heladera.Heladera;
+import com.tp_anual.proyecto_heladeras_solidarias.service.heladera.ActivadorDeHeladerasService;
+import com.tp_anual.proyecto_heladeras_solidarias.service.heladera.HeladeraService;
 import com.tp_anual.proyecto_heladeras_solidarias.service.i18n.I18nService;
 import com.tp_anual.proyecto_heladeras_solidarias.model.area.Area;
 import com.tp_anual.proyecto_heladeras_solidarias.model.incidente.Incidente;
@@ -27,13 +30,15 @@ public class TecnicoService {
     private final TecnicoRepository tecnicoRepository;
     private final VisitaService visitaService;
     private final AreaService areaService;
+    private final ActivadorDeHeladerasService activadorDeHeladerasService;
 
     private final I18nService i18nService;
 
-    public TecnicoService(TecnicoRepository vTecnicoRepository, VisitaService vVisitaService, AreaService vAreaService, I18nService vI18nService) {
+    public TecnicoService(TecnicoRepository vTecnicoRepository, VisitaService vVisitaService, AreaService vAreaService, ActivadorDeHeladerasService vActivadorDeHeladerasService, I18nService vI18nService) {
         tecnicoRepository = vTecnicoRepository;
         visitaService = vVisitaService;
         areaService = vAreaService;
+        activadorDeHeladerasService = vActivadorDeHeladerasService;
 
         i18nService = vI18nService;
     }
@@ -78,6 +83,11 @@ public class TecnicoService {
 
         Visita visita = new Visita(tecnico, incidente, fecha, descripcion, foto, estadoConsulta, estadoConsulta);
         visitaService.guardarVisita(visita);
+
+        if (visita.getEstado()) {
+            Heladera heladera = incidente.getHeladera();
+            activadorDeHeladerasService.marcarComoActiva(heladera.getId());
+        }
 
         log.log(Level.INFO, i18nService.getMessage("tecnico.Tecnico.registrarVisita_info", incidente.getHeladera().getNombre(), incidente.getClass().getSimpleName(), tecnico.getPersona().getNombre(2)));
     }

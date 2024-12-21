@@ -126,7 +126,6 @@
             const altura = document.querySelector('#altura');
             const domicilioDiv = document.querySelector(".domicilio");
 
-            // Ocultar inicialmente los campos dependientes
             cantidadMenoresSelect.style.display = 'none';
             cantidadMenoresSelect.disabled = true;
             cantidadMenoresSelect.required = false;
@@ -141,14 +140,12 @@
             calle.required = false;
             altura.required = false;
 
-            // Event listener para el checkbox de "posee menores a cargo"
             poseeMenoresCheckbox.addEventListener("change", function() {
                 cantidadMenoresSelect.disabled = !this.checked;
                 cantidadMenoresSelect.required = this.checked;
                 cantidadMenoresSelect.style.display = this.checked ? 'block' : 'none';
             });
 
-            // Event listener para el checkbox de "posee domicilio"
             situacionViviendaCheckbox.addEventListener("change", function() {
                 const isChecked = this.checked;
 

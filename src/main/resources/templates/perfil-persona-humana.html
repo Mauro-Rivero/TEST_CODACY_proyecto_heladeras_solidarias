@@ -17,13 +17,12 @@
 
 <body class="doodles">
 <div class="container card">
-    <!-- Cabecera del perfil -->
+
     <div class="text-center">
         <h1 class="FC-palette-h1">MI PERFIL</h1>
         <strong CLASS="text-muted" th:text="${colaborador.getNombre(2)}"></strong>
     </div>
 
-    <!-- Información del perfil -->
     <form th:action="@{/perfil-persona-humana/guardar}" method="POST">
         <div class="info-section not-allowed">
             <label for="nombre">Nombre</label>
@@ -99,8 +98,6 @@
             </div>
         </div>
 
-
-        <!-- Botón de guardar cambios -->
         <button type="submit" class="btn btn-primary ">Guardar Cambios</button>
     </form>
 </div>

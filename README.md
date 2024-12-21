@@ -1,7 +1,8 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/3631b35152a04895acba7627e82fd75e)](https://app.codacy.com/gh/luciacosenza/proyecto_heladeras_solidarias/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
+
 
 # Diseño de Sistemas - Grupo 10
-
-
 
 ## Integrantes
 
